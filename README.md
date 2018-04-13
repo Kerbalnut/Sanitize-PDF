@@ -51,6 +51,10 @@ There are 3 "methods" used in the Ghostscript invocation phase:
 
 [More info on Ghostscript devices](https://ghostscript.com/doc/current/Devices.htm)
 
+[More info on PDF switches](https://www.ghostscript.com/doc/9.23/Use.htm#PDF)
+
+[LOTS more info on PDF switches](https://www.ghostscript.com/doc/9.23/VectorDevices.htm#PDFWRITE) (thank you again to @symcbean from [stackexchange][1] for distilling this down into something workable!)
+
 After the script has ended, if you "Press ANY key..." it will delete the placeholder PostScript file. Alternatively, you can close the script window at this point and the postscript.ps file will remain for inspection.
 
 ### How-to-modify:
