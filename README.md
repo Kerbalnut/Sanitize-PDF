@@ -1,4 +1,4 @@
-# Sanitize-PDF
+# Sanitize-PDF.bat
 Sanitize or Flatten PDF documents which may have "active content" so they pass through corporate firewalls better.
 
 If you create multi-page PDFs with many pictures and graphics (such as a portfolio) and email them out to companies with strict firewalls (such as an HR department) you may have had those emails bounce back with an error message such as **"error: messages with active content/attachments (e.g. Office macros) will not be transmitted."**
