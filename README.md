@@ -9,9 +9,9 @@ PDFs can gain these features for any number of reasons, sometimes it's just the 
 
 No matter how they gain them, there is a surprising lack of tools available to simply delete any "active content" a PDF may contain. It seems like the only easy solution is using an older (unavailable) version of Adobe Reader or paying for a full copy of Adobe Acrobat:
 
-[forums.adobe.com - 
+- [forums.adobe.com - 
 How do I remove active content from a pdf file](https://forums.adobe.com/thread/1644285)
-[Step 4:  Preparing a PDF For Posting - HHS.gov](https://www.hhs.gov/web/section-508/making-files-accessible/create-accessible-pdfs/step-4/index.html)
+- [Step 4:  Preparing a PDF For Posting - HHS.gov](https://www.hhs.gov/web/section-508/making-files-accessible/create-accessible-pdfs/step-4/index.html)
 
 Another option is Ghostscript, "an interpreter for the PostScript language and for PDF". [PostScript](https://www.adobe.com/products/postscript.html) [2 - Wikipedia](https://en.wikipedia.org/wiki/PostScript) is old enough that it does not support embedded Flash or JavaScript exploits that may be present in modern PDFs. This question from security.stackexchange.com lays down the basic method used here: [Effectiveness of flattening a PDF to remove malware](https://security.stackexchange.com/questions/103323/effectiveness-of-flattening-a-pdf-to-remove-malware).
 
@@ -77,9 +77,16 @@ This script is intended to be a quick-n-dirty method to clean single PDFs before
  
 I do not have a proper 32-bit environment to test in, this is where most of my reluctance comes from. Spinning up VMs takes time and resources. Same goes for testing a Chocolatey install method, I'd have to either use VMs or uninstall Ghostscript and Chocolatey on my own machine just to test this. Perhaps if some friends are willing to be my guinea pigs. 
 
+## How to help:
+
+ - Go to [Secruity.SE][1] and upvote that question for having such an awesome, accurate, functional answer in it. I basically copied and pasted their work verbatim. 
+ - [PDFSAM Basic](https://pdfsam.org/download-pdfsam-basic/) is a free PDF Split-And-Merge tool, with functionality for working with PDFs normally only found in paid-for software. I use it all the time and never paid them a dime, so the best I can do for now is promote them for being awesome. Use it, share them on social media, and don't forget you can install [via Chocolatey](https://chocolatey.org/packages/pdfsam): `choco install pdfsam -y`
+ - [Chocolatey](https://chocolatey.org) is an awesome tool for installing, uninstalling, updating, and managing software versions. You can install packages from their public repository, from a local source, or set up your own repository for internal use. They offer Pro and Business [editions](https://chocolatey.org/pricing) with virus scanning features and more, but the main functionality is always free.
+ - And of course, the star of the show: [Ghostscript](https://ghostscript.com/)! Promote them on social media, help contribute if you know how, or help them bug test. A shout-out to all the folks who helped with this project for being awesome human beings. 
+
 ## Disclaimer:
 
 This script is not intended to remove all malware from any PDF or other document, and makes no such promises. Use at your own risk.
 
-[1]:(https://security.stackexchange.com/questions/103323/effectiveness-of-flattening-a-pdf-to-remove-malware)
+[1]: https://security.stackexchange.com/questions/103323/effectiveness-of-flattening-a-pdf-to-remove-malware
 
