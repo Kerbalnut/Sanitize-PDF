@@ -3,7 +3,7 @@ Sanitize or Flatten PDF documents which may have "active content" so they pass t
 
 If you create multi-page PDFs with many pictures and graphics (such as a portfolio) and email them out to companies with strict firewalls (such as an HR department) you may have had those emails bounce back with an error message such as **"error: messages with active content/attachments (e.g. Office macros) will not be transmitted."**
 
-PDFs can gain these features for any number of reasons, sometimes it's just the tools we use to create them. For example, it could be something as simple as using the "save as PDF" feature from Word docs, then using a free tools such as [PDF Split-And-Merge](https://pdfsam.org/download-pdfsam-basic/) to combine several of them into a single PDF document.
+PDFs can gain these features for any number of reasons, sometimes it's just the tools we use to create them. For example, it could be something as simple as using the "save as PDF" feature from Word docs, then using a free tools such as [PDF Split-And-Merge][2] to combine several of them into a single PDF document.
 
 No matter how they gain them, there is a surprising lack of tools available to simply delete any "active content" a PDF may contain. It seems like the only easy solution requires either using an older (unavailable) version of Adobe Reader or paying for a full copy of Adobe Acrobat:
 
@@ -86,7 +86,7 @@ I do not have a proper 32-bit environment to test in, this is where most of my r
 ## How to help:
 
  - Go to [Secruity.SE][1] and upvote that question for having such an awesome, accurate, functional answer in it. I basically copied and pasted their work verbatim. 
- - [PDFSAM Basic](https://pdfsam.org/download-pdfsam-basic/) is a free PDF Split-And-Merge tool, functionality normally only found in paid-for software. I use it all the time and never paid them a dime, so the best I can do for now is promote them for being awesome. Use it, share them on social media, and don't forget you can install [via Chocolatey](https://chocolatey.org/packages/pdfsam): `choco install pdfsam -y`
+ - [PDFSAM Basic][2] is a free PDF Split-And-Merge tool, functionality normally only found in paid-for software. I use it all the time and never paid them a dime, so the best I can do for now is promote them for being awesome. Use it, share them on social media, and don't forget you can install [via Chocolatey](https://chocolatey.org/packages/pdfsam): `choco install pdfsam -y`
  - [Chocolatey](https://chocolatey.org) is an awesome tool for automating installing, uninstalling, updating, and managing software versions. You can install packages from their public repository, from a local source, or set up your own repository for internal use. They offer Pro and Business [editions](https://chocolatey.org/pricing) with virus scanning features and more, but the main functionality is always free.
  - And of course, the star of the show: [Ghostscript](https://ghostscript.com/)! Promote them on social media, help contribute if you know how, or help them bug test. A shout-out to all the folks who helped with this project for being awesome. 
 
@@ -97,4 +97,5 @@ Send me feature requests and bug reports if you like. No promises on delivery da
 This script is not intended to remove all malware from any PDF or other document, and makes no such promises. Use at your own risk.
 
 [1]: https://security.stackexchange.com/questions/103323/effectiveness-of-flattening-a-pdf-to-remove-malware
+[2]: https://pdfsam.org/download-pdfsam-basic/
 
