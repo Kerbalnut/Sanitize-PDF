@@ -1,5 +1,6 @@
 @ECHO OFF
-SETLOCAL
+SETLOCAL EnableDelayedExpansion
+REM Bugfix: Escaping Exclamation marks: When the shell is running in EnableDelayedExpansion mode the ! character is used to denote a variable and so must be escaped (twice) if you wish to treat it as a regular character: ^^!
 
 ::Index: 
 :: 1. :Parameters
@@ -19,7 +20,8 @@ REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 :: Param1 = PDF file to sanitize
 
-SET "_INPUT_PDF="
+SET "_INPUT_PDF=C:\Users\Grant\Documents\Hg\Resume\Portfolio Finals\Grant-James-Resume-Portfolio.pdf"
+::SET "_INPUT_PDF="
 
 ::SET "_INPUT_PDF=%~nx1"
 
@@ -39,13 +41,18 @@ SET "_PLACEHOLDER_PS=flattened.ps"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-:: Param3 = DPI settings to use for image down-sizing (helps remove image metadata)
+:: Param3 = DPI settings to use for image down-sizing in Method #3 (helps remove image metadata)
 
 SET "_DPI=63"
 SET "_DPI=120"
 SET "_DPI=150"
 SET "_DPI=200"
 ::SET "_DPI=300"
+
+REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+::SET "_METHOD_2=ON"
+SET "_METHOD_2=OFF"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -174,7 +181,7 @@ IF /I NOT "%_CHOCO_CMD_RESULT%"=="SUCCESS" (
 	ECHO %_CHOCO_PKG% install complete, refreshing environment variables...
 	PAUSE
 	refreshenv
-	ECHO Refresh complete^!
+	ECHO Refresh complete^^!
 	REM ECHO DEBUGGING: Continue on with rest of script from here...
 	PAUSE
 	REM GOTO GSWIN64C_SKIP
@@ -239,7 +246,7 @@ IF /I NOT "%_GSWIN64C_INSTALLED%"=="YES" (
 			ECHO Refreshing environment variables...
 			PAUSE
 			refreshenv
-			ECHO Refresh complete^!
+			ECHO Refresh complete^^!
 			REM ECHO DEBUGGING: Continue on with rest of script from here...
 			PAUSE
 			REM GOTO GSWIN64C_SKIP
@@ -285,7 +292,7 @@ IF /I NOT "%_GSWIN64C_INSTALLED%"=="YES" (
 			ECHO Refreshing environment variables...
 			PAUSE
 			refreshenv
-			ECHO Refresh complete^!
+			ECHO Refresh complete^^!
 			REM ECHO DEBUGGING: Continue on with rest of script from here...
 			PAUSE
 			REM GOTO GSWIN64C_SKIP
@@ -369,14 +376,8 @@ REM ECHO DEBUGGING: Beginning Main execution block.
 
 ::===============================================================================
 :: Phase 1: Evaluate input parameters
-:: Phase 2: Test :GetIfPathIsDriveRoot
-:: Phase 3: Test :GetWindowsVersion
-:: Phase 4: Test Banner.cmd (external function)
-:: Phase 5: Test :GetTerminalWidth
-:: Phase 6: Test :CheckLink
-:: Phase 7: Test :GetDate, :ConvertTimeToSeconds, and :ConvertSecondsToTime
-:: Phase 8: Test :InitLog and :InitLogOriginal
-:: Phase 9: Test :CreateShortcut, :CreateSymbolicLink, and :CreateSymbolicDirLink
+:: Phase 2: Running Ghostscript
+:: Phase 3: Compare input and output file sizes
 ::===============================================================================
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -384,7 +385,6 @@ REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 ::===============================================================================
 :: Phase 1: Evaluate input parameters
 ::===============================================================================
-
 
 :: Always prefer parameters passed via command line over hard-coded vars.
 SET "_CALLED_FROM_SCRIPT=DISABLED"
@@ -402,6 +402,8 @@ IF "%_INPUT_PDF%"=="" (
 )
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+:: Clean-up
 
 IF EXIST "%_OUTPUT_PDF%" (
 	DEL "%_OUTPUT_PDF%"
@@ -421,8 +423,13 @@ IF EXIST "%_PLACEHOLDER_PS%" (
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+::===============================================================================
+:: Phase 2: Running Ghostscript
+::===============================================================================
+
+:SanitizeMethod1
 ECHO:
-ECHO Running Ghostscript . . .
+ECHO Running GhostScript . . .
 ECHO:
 ECHO ===============================================================================
 ECHO:
@@ -435,77 +442,146 @@ ECHO:
 ::https://www.ghostscript.com/Documentation.html
 ::https://www.ghostscript.com/doc/9.23/Install.htm
 
-ECHO PDF-to-PDF conversion . . .
+ECHO Method #1: PDF-to-PDF conversion . . .
 ECHO:
+
+REM ECHO DEBUGGING: gswin64c -sDEVICE=pdfwrite
+REM ECHO DEBUGGING: gswin64c -sOutputFile="%%_OUTPUT_PDF%%" "%%_INPUT_PDF%%"
+REM ECHO DEBUGGING: gswin64c -sOutputFile="%_OUTPUT_PDF%" "%_INPUT_PDF%"
 
 ::gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=flattened.pdf %~nx1
 
-gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=%_OUTPUT_PDF% %_INPUT_PDF%
+gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="%_OUTPUT_PDF%" "%_INPUT_PDF%"
 
+IF /I NOT "%_METHOD_2%"=="ON" GOTO SanitizeMethod3
+:SanitizeMethod2
 ECHO:
 ECHO -------------------------------------------------------------------------------
 ECHO:
-ECHO PDF-to-PostScript2-to-PDF . . .
+ECHO Method #2: PDF-to-PostScript2-to-PDF . . .
 ECHO:
+
+REM ECHO DEBUGGING: gswin64c -sDEVICE=ps2write
+REM ECHO DEBUGGING: gswin64c -sOutputFile="%%_PLACEHOLDER_PS%%" "%%_INPUT_PDF%%"
+REM ECHO DEBUGGING: gswin64c -sOutputFile="%_PLACEHOLDER_PS%" "%_INPUT_PDF%"
 
 :: Ghostscript Devices:
 ::https://ghostscript.com/doc/current/Devices.htm
 ::gswin64c -dNOPAUSE -dBATCH -sDEVICE=ps2write -sOutputFile=flattened.ps %_INPUT_PDF%
-gswin64c -dNOPAUSE -dBATCH -sDEVICE=ps2write -sOutputFile=%_PLACEHOLDER_PS% %_INPUT_PDF%
 ::gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=%_PLACEHOLDER_PS% %_INPUT_PDF%
+gswin64c -dNOPAUSE -dBATCH -sDEVICE=ps2write -sOutputFile="%_PLACEHOLDER_PS%" "%_INPUT_PDF%"
 
 ECHO:
 
-::https://www.ghostscript.com/doc/9.23/Use.htm#PDF
-gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=%_OUTPUT_PDF_PS% %_PLACEHOLDER_PS%
+REM ECHO DEBUGGING: gswin64c -sDEVICE=pdfwrite
+REM ECHO DEBUGGING: gswin64c -sOutputFile="%%_OUTPUT_PDF_PS%%" "%%_PLACEHOLDER_PS%%"
+REM ECHO DEBUGGING: gswin64c -sOutputFile="%_OUTPUT_PDF_PS%" "%_PLACEHOLDER_PS%"
 
+::https://www.ghostscript.com/doc/9.23/Use.htm#PDF
+gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="%_OUTPUT_PDF_PS%" "%_PLACEHOLDER_PS%"
+
+:SanitizeMethod3
 ECHO:
 ECHO -------------------------------------------------------------------------------
 ECHO:
-ECHO PDF-to-PDF ^(image resolution downsize to %_DPI% DPI^) . . .
+ECHO Method #3: PDF-to-PDF ^(image resolution downsize to %_DPI% DPI^) . . .
 ECHO:
+
+REM ECHO DEBUGGING: gswin64c -sDEVICE=pdfwrite
+REM ECHO DEBUGGING: gswin64c -dDownsampleColorImages -dColorImageDownsampleType=/Bicubic -dColorImageResolution=%_DPI% -dDownsampleGrayImages -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=%_DPI% -dDownsampleMonoImages -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=%_DPI%
+REM ECHO DEBUGGING: gswin64c -sOutputFile="%%_OUTPUT_PDF_IMAGES%%" "%%_INPUT_PDF%%"
+REM ECHO DEBUGGING: gswin64c -sOutputFile="%_OUTPUT_PDF_IMAGES%" "%_INPUT_PDF%"
 
 ::gswin64c -dNOPAUSE -dBATCH -r%_DPI% -sDEVICE=pdfwrite -sOutputFile=%_OUTPUT_PDF_IMAGES% %_INPUT_PDF%
 
 ::-dDownsampleColorImages -dColorImageDownsampleType=/Bicubic -dColorImageResolution=%_DPI% -dDownsampleGrayImages -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=%_DPI% -dDownsampleMonoImages -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=%_DPI%
 
 ::https://www.ghostscript.com/doc/9.23/VectorDevices.htm#PDFWRITE
-gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dDownsampleColorImages -dColorImageDownsampleType=/Bicubic -dColorImageResolution=%_DPI% -dDownsampleGrayImages -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=%_DPI% -dDownsampleMonoImages -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=%_DPI% -sOutputFile=%_OUTPUT_PDF_IMAGES% %_INPUT_PDF%
+gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dDownsampleColorImages -dColorImageDownsampleType=/Bicubic -dColorImageResolution=%_DPI% -dDownsampleGrayImages -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=%_DPI% -dDownsampleMonoImages -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=%_DPI% -sOutputFile="%_OUTPUT_PDF_IMAGES%" "%_INPUT_PDF%"
 
 :: Test for failure condition.
 ::SET "_OUTPUT_PDF=%_INPUT_PDF%"
 
+ECHO:
+ECHO End conversions.
+ECHO:
+ECHO ===============================================================================
+ECHO:
+
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+::===============================================================================
+:: Phase 3: Compare input and output file sizes
+::===============================================================================
+
 SET "_INPUT_SIZE=%~z1"
+SET "_METHOD_NAME="
+
+:EvaluateMethod1
 FOR /F "usebackq" %%G IN ('%_OUTPUT_PDF%') DO SET "_OUTPUT_SIZE=%%~zG"
 ::https://ss64.com/nt/set.html
 SET /A "_SIZE_DIFF=%_INPUT_SIZE%-%_OUTPUT_SIZE%"
 SET /A "_SIZE_DIFF/=1024"
 ::ECHO Size difference = %_SIZE_DIFF% KB
 
+ECHO Method #1: PDF-to-PDF conversion . . .
 ECHO:
 IF %_SIZE_DIFF% GTR 0 (
-	ECHO Success^!
+	ECHO Success^^!
 	ECHO "%_OUTPUT_PDF%" is %_SIZE_DIFF% KB smaller than "%_INPUT_PDF%"
+) ELSE IF %_SIZE_DIFF% LSS 0 (
+	SET /A "_SIZE_DIFF_NEG=%_SIZE_DIFF%*-1"
+	ECHO ===============================================================================
+	ECHO:
+	ECHO Failure^^!
+	ECHO Output PDF is !_SIZE_DIFF_NEG! KB larger than Input PDF ^(^^!^)
+	ECHO:
+	ECHO Output = "%_OUTPUT_PDF%"
+	ECHO  Input = "%_INPUT_PDF%"
+	ECHO:
+	ECHO Output = %_OUTPUT_SIZE% B
+	ECHO  Input = %_INPUT_SIZE% B
+	ECHO:
+	ECHO Size difference = %_SIZE_DIFF% KB
+	ECHO:
+	ECHO -------------------------------------------------------------------------------
+) ELSE IF %_SIZE_DIFF% EQU 0 (
+	ECHO ===============================================================================
+	ECHO:
+	ECHO Failure^^!
+	ECHO Output PDF is same size as Input PDF.
+	ECHO:
+	ECHO Output = "%_OUTPUT_PDF%"
+	ECHO  Input = "%_INPUT_PDF%"
+	ECHO:
+	ECHO Output = %_OUTPUT_SIZE% B
+	ECHO  Input = %_INPUT_SIZE% B
+	ECHO:
+	ECHO Size difference = %_SIZE_DIFF% KB
+	ECHO:
+	ECHO -------------------------------------------------------------------------------
 ) ELSE (
 	ECHO ===============================================================================
 	ECHO:
-	ECHO Failure^!
-	ECHO Output PDF is either same size ^(or larger^!^) than Input PDF.
+	ECHO Failure^^!
+	ECHO Output PDF is either same size ^(or larger^^!^) than Input PDF.
 	ECHO:
-	ECHO  Input = %_INPUT_SIZE% B
-	ECHO Output = %_OUTPUT_SIZE% B
-	ECHO:
-	ECHO  Input = "%_INPUT_PDF%"
 	ECHO Output = "%_OUTPUT_PDF%"
+	ECHO  Input = "%_INPUT_PDF%"
+	ECHO:
+	ECHO Output = %_OUTPUT_SIZE% B
+	ECHO  Input = %_INPUT_SIZE% B
 	ECHO:
 	ECHO Size difference = %_SIZE_DIFF% KB
 	ECHO:
 	ECHO -------------------------------------------------------------------------------
 )
-ECHO:
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+IF /I NOT "%_METHOD_2%"=="ON" GOTO EvaluateMethod3
+:EvaluateMethod2
+ECHO:
+ECHO Method #2: PDF-to-PostScript2-to-PDF . . .
+ECHO:
 FOR /F "usebackq" %%G IN ('%_OUTPUT_PDF_PS%') DO SET "_OUTPUT_PS_SIZE=%%~zG"
 ECHO PostScript2 conversion:
 IF %_OUTPUT_PS_SIZE% LSS %_INPUT_SIZE% (
@@ -528,34 +604,68 @@ IF %_OUTPUT_PS_SIZE% LSS %_OUTPUT_SIZE% (
 	ECHO "%_OUTPUT_PDF_PS%" is !_SIZE_DIFF! KB larger than "%_OUTPUT_PDF%"
 )
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+:EvaluateMethod3
+ECHO:
+ECHO Method #3: PDF-to-PDF ^(image resolution downsize to %_DPI% DPI^) . . .
 FOR /F "usebackq" %%G IN ('%_OUTPUT_PDF_IMAGES%') DO SET "_OUTPUT_LOWRES_SIZE=%%~zG"
 SET /A "_SIZE_DIFF=%_INPUT_SIZE%-%_OUTPUT_LOWRES_SIZE%
 SET /A "_SIZE_DIFF/=1024"
 ECHO:
 ECHO Image resolution downsize:
 IF %_SIZE_DIFF% GTR 0 (
-	ECHO Success^!
+	ECHO Success^^!
 	ECHO "%_OUTPUT_PDF_IMAGES%" is %_SIZE_DIFF% KB smaller than "%_INPUT_PDF%"
+) ELSE IF %_SIZE_DIFF% LSS 0 (
+	SET /A "_SIZE_DIFF_NEG=%_SIZE_DIFF%*-1"
+	ECHO ===============================================================================
+	ECHO:
+	ECHO Failure^^!
+	ECHO Output PDF is !_SIZE_DIFF_NEG! KB larger than Input PDF ^(^^!^)
+	ECHO:
+	ECHO Output = "%_OUTPUT_PDF_IMAGES%"
+	ECHO  Input = "%_INPUT_PDF%"
+	ECHO:
+	ECHO Output = %_OUTPUT_LOWRES_SIZE% B
+	ECHO  Input = %_INPUT_SIZE% B
+	ECHO:
+	ECHO Size difference = %_SIZE_DIFF% KB
+	ECHO:
+	ECHO -------------------------------------------------------------------------------
+) ELSE IF %_SIZE_DIFF% EQU 0 (
+	ECHO ===============================================================================
+	ECHO:
+	ECHO Failure^^!
+	ECHO Output PDF is same size as Input PDF.
+	ECHO:
+	ECHO Output = "%_OUTPUT_PDF%"
+	ECHO  Input = "%_INPUT_PDF%"
+	ECHO:
+	ECHO Output = %_OUTPUT_SIZE% B
+	ECHO  Input = %_INPUT_SIZE% B
+	ECHO:
+	ECHO Size difference = %_SIZE_DIFF% KB
+	ECHO:
+	ECHO -------------------------------------------------------------------------------
 ) ELSE (
 	ECHO ===============================================================================
 	ECHO:
-	ECHO Failure^!
-	ECHO Output PDF is either same size ^(or larger^!^) than Input PDF.
+	ECHO Failure^^!
+	ECHO Output PDF is either same size ^(or larger^^!^) than Input PDF.
 	ECHO:
-	ECHO  Input = %_INPUT_SIZE% B
-	ECHO Output = %_OUTPUT_LOWRES_SIZE% B
-	ECHO:
-	ECHO  Input = "%_INPUT_PDF%"
 	ECHO Output = "%_OUTPUT_PDF_IMAGES%"
+	ECHO  Input = "%_INPUT_PDF%"
+	ECHO:
+	ECHO Output = %_OUTPUT_LOWRES_SIZE% B
+	ECHO  Input = %_INPUT_SIZE% B
 	ECHO:
 	ECHO Size difference = %_SIZE_DIFF% KB
 	ECHO:
 	ECHO -------------------------------------------------------------------------------
 )
 ECHO:
-ECHO End %~nx0.
-ECHO:
-PAUSE
+:: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+:: Clean-up
 
 IF EXIST "%_PLACEHOLDER_PS%" (
 	DEL "%_PLACEHOLDER_PS%"
@@ -686,7 +796,7 @@ SETLOCAL
 :: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 SET "_PATH_TO_ADD=%~1"
 IF "%_PATH_TO_ADD%"=="" (
-	ECHO ERROR in AddToPATH^! No path to add supplied.
+	ECHO ERROR in AddToPATH^^! No path to add supplied.
 	ECHO:
 	PAUSE
 	ENDLOCAL
@@ -716,7 +826,7 @@ SETLOCAL
 :: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 SET "_PATH_TO_REMOVE=%~1"
 IF "%_PATH_TO_REMOVE%"=="" (
-	ECHO ERROR in RemoveFromPATH^! No path to remove supplied.
+	ECHO ERROR in RemoveFromPATH^^! No path to remove supplied.
 	ECHO:
 	PAUSE
 	ENDLOCAL
@@ -736,4 +846,9 @@ EXIT /B
 :Footer
 :END
 ENDLOCAL
+REM ECHO DEBUGGING: End-of-script.
+ECHO:
+ECHO End %~nx0.
+ECHO:
+PAUSE
 EXIT /B
