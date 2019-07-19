@@ -20,14 +20,8 @@ REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 :: Param1 = PDF file to sanitize
 
-SET "_INPUT_PDF=C:\Users\Grant\Documents\Hg\Resume\Portfolio Finals\Grant-James-Resume-Portfolio.pdf"
-::SET "_INPUT_PDF="
-
-::SET "_INPUT_PDF=%~nx1"
-
-:: https://ss64.com/nt/syntax-args.html
-:: %~n1 Expand %1 to a file Name without file extension or path - MyFile or if only a path is present, with no trailing backslash, the last folder in that path.
-:: %~x1 Expand %1 to a file eXtension only - .txt
+SET "_INPUT_PDF="
+SET "_INPUT_PDF=%USERPROFILE%\Documents\example document.pdf"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -50,6 +44,8 @@ SET "_DPI=200"
 ::SET "_DPI=300"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+:: Params4 = Choose with methods to turn on or off
 
 ::SET "_METHOD_2=ON"
 SET "_METHOD_2=OFF"
@@ -396,6 +392,14 @@ IF NOT "%~1"=="" (
 IF "%_INPUT_PDF%"=="" (
 	ECHO:
 	ECHO No input file.
+	ECHO:
+	PAUSE
+	GOTO END
+)
+
+IF NOT EXIST "%_INPUT_PDF%" (
+	ECHO:
+	ECHO "%_INPUT_PDF%" does not exist.
 	ECHO:
 	PAUSE
 	GOTO END
