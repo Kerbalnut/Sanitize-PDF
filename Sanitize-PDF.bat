@@ -121,7 +121,7 @@ IF EXIST "%ChocolateyInstall%" (
 :: Dependencies:
 :: choco.exe "%_CHOCO_INSTALLED%"
 :: :ElevateMe
-::-------------------------------------------------------------------------------
+::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ::GOTO GSWIN64C_SKIP
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 :: Parameters:
@@ -140,8 +140,9 @@ SET "_AFTER_ADMIN_ELEVATION=%Temp%\temp-gswin64c-function.txt"
 :: 4b. Check if the gswin64c.exe exists in Program Files directory
 :: 4c. Check if the gswin64c.exe exists in Program Files (x86) directory
 :: 5. Cast errors if our External Function is still not found. Attempt to install it automatically if Chocolatey or Boxstarter functions are found.
-::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+::-------------------------------------------------------------------------------
 SET "_GSWIN64C_INSTALLED=NO"
+::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 :: 1. Check if we have Administrator privileges
 REM Bugfix: Check if we have admin rights right now (even tho we may not need them), so that later functions can check the result without requiring EnableDelayedExpansion to be enabled.
 REM ECHO DEBUGGING: _GOT_ADMIN = '%_GOT_ADMIN%'
@@ -170,7 +171,7 @@ IF /I "%_CHOICES_BEFORE_ELEVATION%"=="ChocoInstallGhostscript" (
 		ECHO -------------------------------------------------------------------------------
 		ECHO Administrator rights elevation failed. Software install may fail.
 		ECHO:
-		ECHO Continue anyway?
+		ECHO Continue anyway? ^(Not Recommended^)
 		ECHO:
 		PAUSE
 		GOTO gswin64c_install
