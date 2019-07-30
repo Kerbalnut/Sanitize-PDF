@@ -115,13 +115,25 @@ IF EXIST "%ChocolateyInstall%" (
 ::-------------------------------------------------------------------------------
 ::GOTO GSWIN64C_SKIP
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-:: Parameters
-SET "_GSWIN64C_INSTALLED=NO"
+:: Parameters:
 SET "_QUIET_ERRORS=NO"
 ::SET "_QUIET_ERRORS=YES"
 SET "_CHOCO_PKG=Ghostscript"
 SET "_AFTER_ADMIN_ELEVATION=%Temp%\temp-gswin64c-function.txt"
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+:: Index:
+:: 1. Check if we have Administrator privileges
+:: 2. Check if we just got commands ready from a previous run.
+:: 2a. Check if a Chocolatey Install was requested.
+:: 3. Chocolatey install function
+:: 4. Test if our External Function exists.
+:: 4a. Check if the gswin64c help command succeeds. Redirect text output to NULL but redirect error output to temp file.
+:: 4b. Check if the gswin64c.exe exists in Program Files directory
+:: 4c. Check if the gswin64c.exe exists in Program Files (x86) directory
+:: 5. Cast errors if our External Function is still not found. Attempt to install it automatically if Chocolatey or Boxstarter functions are found.
+::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+SET "_GSWIN64C_INSTALLED=NO"
+:: 1. Check if we have Administrator privileges
 REM Bugfix: Check if we have admin rights right now (even tho we may not need them), so that later functions can check the result without requiring EnableDelayedExpansion to be enabled.
 REM ECHO DEBUGGING: _GOT_ADMIN = '%_GOT_ADMIN%'
 ::https://stackoverflow.com/questions/4051883/batch-script-how-to-check-for-admin-rights
@@ -129,7 +141,7 @@ NET SESSION >nul 2>&1 && SET "_GOT_ADMIN=YES"
 NET SESSION >nul 2>&1 || SET "_GOT_ADMIN=NO"
 REM ECHO DEBUGGING: _GOT_ADMIN = '%_GOT_ADMIN%'
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-:: Check if we just got commands ready from a previous run.
+:: 2. Check if we just got commands ready from a previous run.
 IF EXIST "%_AFTER_ADMIN_ELEVATION%" (
 	FOR /F "tokens=*" %%G IN (%_AFTER_ADMIN_ELEVATION%) DO (
 		SET "_CHOICES_BEFORE_ELEVATION=%%~G"
@@ -138,7 +150,7 @@ IF EXIST "%_AFTER_ADMIN_ELEVATION%" (
 IF EXIST "%_AFTER_ADMIN_ELEVATION%" DEL /F /Q "%_AFTER_ADMIN_ELEVATION%" & REM Delete this file-var as soon as it's retrieved 
 REM ECHO DEBUGGING: _CHOICES_BEFORE_ELEVATION = '%_CHOICES_BEFORE_ELEVATION%'
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-:: Check if a Chocolatey Install was requested.
+:: 2a. Check if a Chocolatey Install was requested.
 IF /I "%_CHOICES_BEFORE_ELEVATION%"=="ChocoInstallGhostscript" (
 	REM Check if we have admin rights
 	IF "%_GOT_ADMIN%"=="YES" (
@@ -156,7 +168,7 @@ IF /I "%_CHOICES_BEFORE_ELEVATION%"=="ChocoInstallGhostscript" (
 	)
 )
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-::Chocolatey install function
+:: 3. Chocolatey install function
 GOTO gswin64c_install_skip
 :gswin64c_install
 SET "_CHOCO_CMD_RESULT=FAILURE"
@@ -187,9 +199,9 @@ REM ECHO DEBUGGING: End of :gswin64c_install function.
 REM Bug: Script will not make it this far to this message.
 :gswin64c_install_skip
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-:: Test if our External Function exists.
+:: 4. Test if our External Function exists.
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-:: Check if the gswin64c help command succeeds. Redirect text output to NULL but redirect error output to temp file.
+:: 4a. Check if the gswin64c help command succeeds. Redirect text output to NULL but redirect error output to temp file.
 SET "_ERROR_OUTPUT_FILE=%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.txt"
 gswin64c -h >nul 2>&1 && SET "_GSWIN64C_INSTALLED=YES" && SET "_GSWIN64C_EXE=gswin64c" & REM && ECHO gswin64c.exe help command succeeded.
 gswin64c -h >nul 2>"%_ERROR_OUTPUT_FILE%" || (
@@ -208,7 +220,7 @@ gswin64c -h >nul 2>"%_ERROR_OUTPUT_FILE%" || (
 )
 IF EXIST "%_ERROR_OUTPUT_FILE%" DEL /Q "%_ERROR_OUTPUT_FILE%" & REM Clean-up temp file ASAP.
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-:: Check if the gswin64c.exe exists in Program Files directory
+:: 4b. Check if the gswin64c.exe exists in Program Files directory
 REM ECHO DEBUGGING: Looking for gswin64c.exe in Program Files "%ProgramFiles%"
 IF NOT EXIST "%_GSWIN64C_EXE%" SET "_GSWIN64C_EXE="
 SET "_FOLDER="
@@ -255,7 +267,7 @@ IF /I NOT "%_GSWIN64C_INSTALLED%"=="YES" (
 	)
 )
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-:: Check if the gswin64c.exe exists in Program Files (x86) directory
+:: 4c. Check if the gswin64c.exe exists in Program Files (x86) directory
 REM ECHO DEBUGGING: Looking for gswin64c.exe in Program Files "%ProgramFiles(x86)%"
 IF NOT EXIST "%_GSWIN64C_EXE%" SET "_GSWIN64C_EXE="
 SET "_FOLDER="
@@ -301,7 +313,7 @@ IF /I NOT "%_GSWIN64C_INSTALLED%"=="YES" (
 	)
 )
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-:: Cast errors if our External Function is still not found. Attempt to install it automatically if Chocolatey or Boxstarter functions are found.
+:: 5. Cast errors if our External Function is still not found. Attempt to install it automatically if Chocolatey or Boxstarter functions are found.
 REM ECHO DEBUGGING: Call errors and installers if script is still not found . . .
 IF /I "%_GSWIN64C_INSTALLED%"=="NO" (
 	ECHO:
