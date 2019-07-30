@@ -67,13 +67,16 @@ REM ECHO DEBUGGING: Begin ExternalFunctions block.
 
 ::choco.exe
 :-------------------------------------------------------------------------------
+:: Outputs:
+:: "%_CHOCO_INSTALLED%" = "YES" or "NO"
+:: Example:
 ::IF /I "%_CHOCO_INSTALLED%"=="YES" choco upgrade javaruntime jre8 -y
 ::-------------------------------------------------------------------------------
 :: Parameters
-::SET "_CHOCO_INSTALLED=YES"
-SET "_CHOCO_INSTALLED=NO"
 ::SET "_QUIET_ERRORS=NO"
 SET "_QUIET_ERRORS=YES"
+::-------------------------------------------------------------------------------
+SET "_CHOCO_INSTALLED=NO"
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 :: Test: check if fake "choc" command fails. Redirect all text & error output to NULL (supress all output)
 ::choc /? >nul 2>&1 && ECHO "Choc" command exists?^!?^!
@@ -111,7 +114,13 @@ IF EXIST "%ChocolateyInstall%" (
 
 ::gswin64c.exe (Ghostscript)
 :-------------------------------------------------------------------------------
+:: Outputs:
+:: "%_GSWIN64C_INSTALLED%" = "YES" or "NO"
+:: Example:
 ::IF /I "%_GSWIN64C_INSTALLED%"=="YES" gswin64c
+:: Dependencies:
+:: choco.exe "%_CHOCO_INSTALLED%"
+:: :ElevateMe
 ::-------------------------------------------------------------------------------
 ::GOTO GSWIN64C_SKIP
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -343,13 +352,13 @@ IF /I "%_GSWIN64C_INSTALLED%"=="NO" (
 			REM Bugfix: cannot use ECHO( for newlines within IF statement, instead use ECHO. or ECHO: 
 			REM ECHO -------------------------------------------------------------------------------
 			ECHO:
-			ECHO ChocoInstallGhostscript> "%_AFTER_ADMIN_ELEVATION%"
+			ECHO ChocoInstall%_CHOCO_PKG%> "%_AFTER_ADMIN_ELEVATION%"
 			REM PAUSE
 			GOTO ElevateMe
 		)
 	) ELSE (
 		REM Chocolatey is not installed.
-		ECHO Is Ghostscript installed? ^(contains gswin64c^)
+		ECHO Is %_CHOCO_PKG% installed? ^(contains gswin64c^)
 		ECHO:
 		ECHO This software can be installed via chocolatey:
 		ECHO:
@@ -784,7 +793,7 @@ ECHO Set UAC = CreateObject^("Shell.Application"^) > "%Temp%\~ElevateMe.vbs"
 ::ECHO UAC.ShellExecute "CMD", "/C ""%_CMD_RUN%""", "", "RUNAS", 1 >> "%Temp%\~ElevateMe.vbs"
 ECHO UAC.ShellExecute "CMD", "/K ""%_CMD_RUN%""", "", "RUNAS", 1 >> "%Temp%\~ElevateMe.vbs"
 ::ECHO UAC.ShellExecute "CMD", "/K ""%_batchFile% %_Args%""", "", "RUNAS", 1 >> "%temp%\~ElevateMe.vbs"
-
+:: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 cscript "%Temp%\~ElevateMe.vbs" 
 :: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 EXIT /B
