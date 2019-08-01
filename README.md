@@ -29,6 +29,8 @@ Run from command prompt or PowerShell:
 
 *Assuming a 64-bit OS:* `shimgen --output=gswin64c --path="$env:ProgramFiles\gs\gs9.23\bin\gswin64c.exe" --debug`
 
+> [v1.1.1 or greater](https://github.com/Kerbalnut/Sanitize-PDF/releases) of **Sanitize-PDF.bat** will automatically install & shim Ghostscript if you have [chocolatey](https://chocolatey.org/install) installed.
+
 ## How-to-Use:
 
 With *Ghostscript* installed, and gswin64c.exe either *shimmed* or added to the *PATH variable* as described above, Sanitize-PDF.bat is ready to use. 
@@ -77,7 +79,7 @@ So DPI will be set to 200 by default. If you wish to use 300, simply uncomment t
 
 This script is intended to be a quick-n-dirty method to clean single PDFs before emailing them. The following is a list of some features that *could* be added later, but as it is now, this script is considered feature-complete (v1.0). I personally do not intend to add these features, since this script already does everything I need it to. Any more would be an exercise in helping others when I'm still uncertain any others will even want to use it. This may change if more people become interested in it though.
 
- - Auto-install Ghostscript 9.23 and auto-shim `gswin64c.exe`. I already have Get-Chocolatey.bat scripts I could whip together with something that calls shimgen.exe
+ - ~~Auto-install Ghostscript 9.23 and auto-shim `gswin64c.exe`. I already have Get-Chocolatey.bat scripts I could whip together with something that calls shimgen.exe~~ Completed as of [v1.1.0](https://github.com/Kerbalnut/Sanitize-PDF/releases/tag/v1.1.0)
  - Auto-detect 32-bit installs and adjust itself properly. I could either make copies of all 64-bit based scripts, or use a Find-and-replace function to modify the same scripts automatically.
  - Location independence - Currently, the Sanitize-PDF.bat is intended to reside in the same folder as the source PDFs, to make it easy to drag-and-drop and have the outputs ready in the same folder. To make it capable of accepting documents from other folders brings up the question of where to save the output PDFs: where the source document is located, or where the script itself is located? Possible, but it's complexity I'm not ready to add yet.
  
