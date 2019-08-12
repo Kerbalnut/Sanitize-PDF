@@ -763,6 +763,7 @@ REM ECHO DEBUGGING: Begin DefineFunctions block.
 GOTO SkipFunctions
 :-------------------------------------------------------------------------------
 :SampleFunction RequiredParam [OptionalParam]
+::CALL :SampleFunction "%_REQ_PARAM%" "Optional param."
 :: Dependences: other functions this one is dependent on.
 :: Description for SampleFunction's purpose & ability.
 :: Description of RequiredParam and OptionalParam.
