@@ -47,7 +47,7 @@ REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 :: Params4 = Choose with methods to turn on or off
 
-::SET "_METHOD_2=ON"
+SET "_METHOD_2=ON"
 SET "_METHOD_2=OFF"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -121,7 +121,7 @@ IF EXIST "%ChocolateyInstall%" (
 :: Dependencies:
 :: choco.exe "%_CHOCO_INSTALLED%"
 :: :ElevateMe
-::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+::-------------------------------------------------------------------------------
 ::GOTO GSWIN64C_SKIP
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 :: Parameters:
@@ -161,7 +161,7 @@ IF EXIST "%_AFTER_ADMIN_ELEVATION%" DEL /F /Q "%_AFTER_ADMIN_ELEVATION%" & REM D
 REM ECHO DEBUGGING: _CHOICES_BEFORE_ELEVATION = '%_CHOICES_BEFORE_ELEVATION%'
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 :: 2a. Check if a Chocolatey Install was requested.
-IF /I "%_CHOICES_BEFORE_ELEVATION%"=="ChocoInstallGhostscript" (
+IF /I "%_CHOICES_BEFORE_ELEVATION%"=="ChocoInstall%_CHOCO_PKG%" (
 	REM Check if we have admin rights
 	IF "%_GOT_ADMIN%"=="YES" (
 		GOTO gswin64c_install
@@ -427,7 +427,42 @@ IF NOT EXIST "%_INPUT_PDF%" (
 	GOTO END
 )
 
+REM -------------------------------------------------------------------------------
+
+:: Store results in same dir as source.
+
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+:: Get Script drive & path
+FOR %%G IN ("%_INPUT_PDF%") DO SET "_INPUT_PDF_PATH=%%~dpG"
+
+REM ECHO DEBUGGING: %%_INPUT_PDF%% = %_INPUT_PDF%
+REM ECHO DEBUGGING: %%_INPUT_PDF_PATH%% = %_INPUT_PDF_PATH%
+
+REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+:: Check if either path ends with a backslash "\" and remove it
+REM ECHO DEBUGGING: %%_INPUT_PDF_PATH%% = %_INPUT_PDF_PATH%
+:: https://ss64.com/nt/syntax-substring.html
+:: %variable:~num_chars_to_skip%
+:: %variable:~num_chars_to_skip,num_chars_to_keep%
+:: A negative number will count backwards from the end of the string.
+:: Get last character
+SET "_LAST_CHAR=%_INPUT_PDF_PATH:~-1%"
+IF "%_LAST_CHAR%"=="\" (
+	REM Get everything except the last character
+	SET "_INPUT_PDF_PATH=%_INPUT_PDF_PATH:~0,-1%"
+)
+REM ECHO DEBUGGING: %%_INPUT_PDF_PATH%% = %_INPUT_PDF_PATH%
+
+REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+SET "_OUTPUT_PDF=%_INPUT_PDF_PATH%\%_OUTPUT_PDF%"
+SET "_OUTPUT_PDF_PS=%_INPUT_PDF_PATH%\%_OUTPUT_PDF_PS%"
+SET "_OUTPUT_PDF_IMAGES=%_INPUT_PDF_PATH%\%_OUTPUT_PDF_IMAGES%"
+SET "_PLACEHOLDER_PS=%_INPUT_PDF_PATH%\%_PLACEHOLDER_PS%"
+
+REM -------------------------------------------------------------------------------
 
 :: Clean-up
 
