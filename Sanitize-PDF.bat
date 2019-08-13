@@ -488,13 +488,13 @@ REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 :: Phase 2: Running Ghostscript
 ::===============================================================================
 
-:SanitizeMethod1
 ECHO:
 ECHO Running GhostScript . . .
 ECHO:
 ECHO ===============================================================================
 ECHO:
 
+:SanitizeMethod1
 :: Method thanks to:
 :: https://security.stackexchange.com/questions/103323/effectiveness-of-flattening-a-pdf-to-remove-malware
 
@@ -514,8 +514,8 @@ REM ECHO DEBUGGING: gswin64c -sOutputFile="%_OUTPUT_PDF%" "%_INPUT_PDF%"
 
 gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="%_OUTPUT_PDF%" "%_INPUT_PDF%"
 
-IF /I NOT "%_METHOD_2%"=="ON" GOTO SanitizeMethod3
 :SanitizeMethod2
+IF /I NOT "%_METHOD_2%"=="ON" GOTO SanitizeMethod3
 ECHO:
 ECHO -------------------------------------------------------------------------------
 ECHO:
@@ -564,10 +564,12 @@ gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dDownsampleColorImages -dColorImag
 ::SET "_OUTPUT_PDF=%_INPUT_PDF%"
 
 ECHO:
-ECHO End conversions.
+ECHO -------------------------------------------------------------------------------
+ECHO:
+ECHO Conversions completed.
 ECHO:
 ECHO ===============================================================================
-ECHO:
+::ECHO:
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -575,155 +577,210 @@ REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 :: Phase 3: Compare input and output file sizes
 ::===============================================================================
 
-SET "_INPUT_SIZE=%~z1"
+ECHO:
+ECHO ===============================================================================
+ECHO Comparing before ^& after sizes . . .
+ECHO ===============================================================================
+ECHO:
+
 SET "_METHOD_NAME="
 
 :EvaluateMethod1
-FOR /F "usebackq" %%G IN ('%_OUTPUT_PDF%') DO SET "_OUTPUT_SIZE=%%~zG"
+FOR %%G IN ("%_INPUT_PDF%") DO SET "_INPUT_SIZE=%%~zG"
+REM ECHO DEBUGGING: %%_INPUT_SIZE%% = %_INPUT_SIZE%
+FOR %%G IN ("%_OUTPUT_PDF%") DO SET "_OUTPUT_SIZE=%%~zG"
+REM ECHO DEBUGGING: %%_OUTPUT_SIZE%% = %_OUTPUT_SIZE%
 ::https://ss64.com/nt/set.html
-SET /A "_SIZE_DIFF=%_INPUT_SIZE%-%_OUTPUT_SIZE%"
-SET /A "_SIZE_DIFF/=1024"
-::ECHO Size difference = %_SIZE_DIFF% KB
+SET /A _SIZE_DIFF=%_INPUT_SIZE%-%_OUTPUT_SIZE%
+REM ECHO DEBUGGING: %%_SIZE_DIFF%% = %_SIZE_DIFF%
+SET /A _SIZE_DIFF/=1024
+REM ECHO DEBUGGING: %%_SIZE_DIFF%% = %_SIZE_DIFF%
+REM ECHO Size difference = %_SIZE_DIFF% KB
+
+SET /A "_INPUT_SIZE_KB=%_INPUT_SIZE%/1024"
+SET /A "_OUTPUT_SIZE_KB=%_OUTPUT_SIZE%/1024"
 
 ECHO Method #1: PDF-to-PDF conversion . . .
 ECHO:
 IF %_SIZE_DIFF% GTR 0 (
-	ECHO Success^^!
-	ECHO "%_OUTPUT_PDF%" is %_SIZE_DIFF% KB smaller than "%_INPUT_PDF%"
+	ECHO ## Success^^! ##
+	ECHO:
+	ECHO "%_OUTPUT_PDF%"
+	ECHO is %_SIZE_DIFF% KB smaller than
+	ECHO "%_INPUT_PDF%"
+	ECHO:
+	ECHO  Input = %_INPUT_SIZE_KB% KB
+	ECHO Output = %_OUTPUT_SIZE_KB% KB
+	ECHO:
+	ECHO -------------------------------------------------------------------------------
 ) ELSE IF %_SIZE_DIFF% LSS 0 (
 	SET /A "_SIZE_DIFF_NEG=%_SIZE_DIFF%*-1"
-	ECHO ===============================================================================
+	REM ECHO ===============================================================================
+	REM ECHO:
+	ECHO ## Failure^^! ##
 	ECHO:
-	ECHO Failure^^!
 	ECHO Output PDF is !_SIZE_DIFF_NEG! KB larger than Input PDF ^(^^!^)
 	ECHO:
-	ECHO Output = "%_OUTPUT_PDF%"
 	ECHO  Input = "%_INPUT_PDF%"
+	ECHO Output = "%_OUTPUT_PDF%"
 	ECHO:
-	ECHO Output = %_OUTPUT_SIZE% B
 	ECHO  Input = %_INPUT_SIZE% B
+	ECHO Output = %_OUTPUT_SIZE% B
 	ECHO:
 	ECHO Size difference = %_SIZE_DIFF% KB
 	ECHO:
 	ECHO -------------------------------------------------------------------------------
 ) ELSE IF %_SIZE_DIFF% EQU 0 (
-	ECHO ===============================================================================
+	REM ECHO ===============================================================================
+	REM ECHO:
+	ECHO ## Failure^^! ##
 	ECHO:
-	ECHO Failure^^!
 	ECHO Output PDF is same size as Input PDF.
 	ECHO:
-	ECHO Output = "%_OUTPUT_PDF%"
 	ECHO  Input = "%_INPUT_PDF%"
+	ECHO Output = "%_OUTPUT_PDF%"
 	ECHO:
-	ECHO Output = %_OUTPUT_SIZE% B
 	ECHO  Input = %_INPUT_SIZE% B
+	ECHO Output = %_OUTPUT_SIZE% B
 	ECHO:
 	ECHO Size difference = %_SIZE_DIFF% KB
 	ECHO:
 	ECHO -------------------------------------------------------------------------------
 ) ELSE (
-	ECHO ===============================================================================
+	REM ECHO ===============================================================================
+	REM ECHO:
+	ECHO ## Failure^^! ##
 	ECHO:
-	ECHO Failure^^!
 	ECHO Output PDF is either same size ^(or larger^^!^) than Input PDF.
 	ECHO:
-	ECHO Output = "%_OUTPUT_PDF%"
 	ECHO  Input = "%_INPUT_PDF%"
+	ECHO Output = "%_OUTPUT_PDF%"
 	ECHO:
-	ECHO Output = %_OUTPUT_SIZE% B
 	ECHO  Input = %_INPUT_SIZE% B
+	ECHO Output = %_OUTPUT_SIZE% B
 	ECHO:
 	ECHO Size difference = %_SIZE_DIFF% KB
 	ECHO:
 	ECHO -------------------------------------------------------------------------------
 )
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-IF /I NOT "%_METHOD_2%"=="ON" GOTO EvaluateMethod3
 :EvaluateMethod2
+IF /I NOT "%_METHOD_2%"=="ON" GOTO EvaluateMethod3
 ECHO:
 ECHO Method #2: PDF-to-PostScript2-to-PDF . . .
 ECHO:
-FOR /F "usebackq" %%G IN ('%_OUTPUT_PDF_PS%') DO SET "_OUTPUT_PS_SIZE=%%~zG"
+FOR %%G IN ("%_OUTPUT_PDF_PS%") DO SET "_OUTPUT_PS_SIZE=%%~zG"
 ECHO PostScript2 conversion:
+ECHO:
 IF %_OUTPUT_PS_SIZE% LSS %_INPUT_SIZE% (
 	SET /A "_SIZE_DIFF=%_INPUT_SIZE%-%_OUTPUT_PS_SIZE%"
 	SET /A "_SIZE_DIFF/=1024"
-	ECHO "%_OUTPUT_PDF_PS%" is !_SIZE_DIFF! KB smaller than "%_INPUT_PDF%"
+	ECHO "%_OUTPUT_PDF_PS%"
+	ECHO is !_SIZE_DIFF! KB smaller than 
+	ECHO "%_INPUT_PDF%"
 ) ELSE (
 	SET /A "_SIZE_DIFF=%_OUTPUT_PS_SIZE%-%_INPUT_SIZE%"
 	SET /A "_SIZE_DIFF/=1024"
-	ECHO "%_OUTPUT_PDF_PS%" is !_SIZE_DIFF! KB larger than "%_INPUT_PDF%"
+	ECHO "%_OUTPUT_PDF_PS%"
+	ECHO is !_SIZE_DIFF! KB larger than 
+	ECHO "%_INPUT_PDF%"
 )
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ECHO:
 IF %_OUTPUT_PS_SIZE% LSS %_OUTPUT_SIZE% (
 	SET /A "_SIZE_DIFF=%_OUTPUT_SIZE%-%_OUTPUT_PS_SIZE%"
 	SET /A "_SIZE_DIFF/=1024"
-	ECHO "%_OUTPUT_PDF_PS%" is !_SIZE_DIFF! KB smaller than "%_OUTPUT_PDF%"
+	ECHO "%_OUTPUT_PDF_PS%"
+	ECHO is !_SIZE_DIFF! KB smaller than 
+	ECHO "%_OUTPUT_PDF%"
 ) ELSE (
 	SET /A "_SIZE_DIFF=%_OUTPUT_PS_SIZE%-%_OUTPUT_SIZE%"
 	SET /A "_SIZE_DIFF/=1024"
-	ECHO "%_OUTPUT_PDF_PS%" is !_SIZE_DIFF! KB larger than "%_OUTPUT_PDF%"
+	ECHO "%_OUTPUT_PDF_PS%"
+	ECHO is !_SIZE_DIFF! KB larger than 
+	ECHO "%_OUTPUT_PDF%"
 )
+ECHO:
+ECHO -------------------------------------------------------------------------------
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 :EvaluateMethod3
 ECHO:
 ECHO Method #3: PDF-to-PDF ^(image resolution downsize to %_DPI% DPI^) . . .
-FOR /F "usebackq" %%G IN ('%_OUTPUT_PDF_IMAGES%') DO SET "_OUTPUT_LOWRES_SIZE=%%~zG"
+FOR %%G IN ("%_OUTPUT_PDF_IMAGES%") DO SET "_OUTPUT_LOWRES_SIZE=%%~zG"
 SET /A "_SIZE_DIFF=%_INPUT_SIZE%-%_OUTPUT_LOWRES_SIZE%
 SET /A "_SIZE_DIFF/=1024"
+SET /A "_INPUT_SIZE_KB=%_INPUT_SIZE%/1024"
+SET /A "_OUTPUT_LOWRES_SIZE_KB=%_OUTPUT_LOWRES_SIZE%/1024"
 ECHO:
 ECHO Image resolution downsize:
+ECHO:
 IF %_SIZE_DIFF% GTR 0 (
-	ECHO Success^^!
-	ECHO "%_OUTPUT_PDF_IMAGES%" is %_SIZE_DIFF% KB smaller than "%_INPUT_PDF%"
+	ECHO ## Success^^! ##
+	ECHO:
+	ECHO "%_OUTPUT_PDF_IMAGES%"
+	ECHO is %_SIZE_DIFF% KB smaller than 
+	ECHO "%_INPUT_PDF%"
+	ECHO:
+	ECHO  Input = %_INPUT_SIZE_KB% KB
+	ECHO Output = %_OUTPUT_LOWRES_SIZE_KB% KB
+	ECHO:
+	ECHO -------------------------------------------------------------------------------
 ) ELSE IF %_SIZE_DIFF% LSS 0 (
 	SET /A "_SIZE_DIFF_NEG=%_SIZE_DIFF%*-1"
-	ECHO ===============================================================================
+	REM ECHO ===============================================================================
+	REM ECHO:
+	ECHO ## Failure^^! ##
 	ECHO:
-	ECHO Failure^^!
 	ECHO Output PDF is !_SIZE_DIFF_NEG! KB larger than Input PDF ^(^^!^)
 	ECHO:
-	ECHO Output = "%_OUTPUT_PDF_IMAGES%"
 	ECHO  Input = "%_INPUT_PDF%"
+	ECHO Output = "%_OUTPUT_PDF_IMAGES%"
 	ECHO:
-	ECHO Output = %_OUTPUT_LOWRES_SIZE% B
 	ECHO  Input = %_INPUT_SIZE% B
+	ECHO Output = %_OUTPUT_LOWRES_SIZE% B
 	ECHO:
 	ECHO Size difference = %_SIZE_DIFF% KB
 	ECHO:
 	ECHO -------------------------------------------------------------------------------
 ) ELSE IF %_SIZE_DIFF% EQU 0 (
-	ECHO ===============================================================================
+	REM ECHO ===============================================================================
+	REM ECHO:
+	ECHO ## Failure^^! ##
 	ECHO:
-	ECHO Failure^^!
 	ECHO Output PDF is same size as Input PDF.
 	ECHO:
-	ECHO Output = "%_OUTPUT_PDF%"
 	ECHO  Input = "%_INPUT_PDF%"
+	ECHO Output = "%_OUTPUT_PDF%"
 	ECHO:
-	ECHO Output = %_OUTPUT_SIZE% B
 	ECHO  Input = %_INPUT_SIZE% B
+	ECHO Output = %_OUTPUT_SIZE% B
 	ECHO:
 	ECHO Size difference = %_SIZE_DIFF% KB
 	ECHO:
 	ECHO -------------------------------------------------------------------------------
 ) ELSE (
-	ECHO ===============================================================================
+	REM ECHO ===============================================================================
+	REM ECHO:
+	ECHO ## Failure^^! ##
 	ECHO:
-	ECHO Failure^^!
 	ECHO Output PDF is either same size ^(or larger^^!^) than Input PDF.
 	ECHO:
-	ECHO Output = "%_OUTPUT_PDF_IMAGES%"
 	ECHO  Input = "%_INPUT_PDF%"
+	ECHO Output = "%_OUTPUT_PDF_IMAGES%"
 	ECHO:
-	ECHO Output = %_OUTPUT_LOWRES_SIZE% B
 	ECHO  Input = %_INPUT_SIZE% B
+	ECHO Output = %_OUTPUT_LOWRES_SIZE% B
 	ECHO:
 	ECHO Size difference = %_SIZE_DIFF% KB
 	ECHO:
 	ECHO -------------------------------------------------------------------------------
 )
+
 ECHO:
+ECHO Size comparison completed.
+ECHO:
+ECHO ===============================================================================
+
 :: - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 :: Clean-up
