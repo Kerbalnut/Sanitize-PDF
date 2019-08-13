@@ -48,7 +48,7 @@ REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 :: Params4 = Choose with methods to turn on or off
 
 SET "_METHOD_2=ON"
-SET "_METHOD_2=OFF"
+::SET "_METHOD_2=OFF"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
