@@ -35,9 +35,9 @@ Run from command prompt or PowerShell:
 
 With *Ghostscript* installed, and gswin64c.exe either *shimmed* or added to the *PATH variable* as described above, Sanitize-PDF.bat is ready to use. 
 
-**Sanitize-PDF.bat** must be in the same directory as the PDFs you wish to "sanitize". It's intended use is to drag-and-drop a PDF onto Sanitize-PDF.bat, and the script will take care of the rest!
+Either drag-and-drop a pdf file onto **Sanitize-PDF.bat** or, edit the `_INPUT_PDF` variable in the :Parameters section at the very top of the script and run it. That's it!
 
-Once finished, the Sanitize-PDF.bat will have generated 3 new PDF documents in the same folder it's located in. These three new documents are the result of the different methods employed to sanitize or flatten the original, as described below.
+Once finished, the Sanitize-PDF.bat will have generated 3 new PDF documents in the same folder as the input PDF. These three new documents are the result of the different methods employed to sanitize or flatten the original, as described below.
 
 Sanitize-PDF.bat does not change or delete the original source document dropped on it. 
 
@@ -73,17 +73,18 @@ SET "_DPI=200"
 ::SET "_DPI=300"
 ```
 
-So DPI will be set to 200 by default. If you wish to use 300, simply uncomment that line. To use 150 DPI instead, simply comment out the 200 line. To use 120 DPI, comment out the 150 and 200 lines. The last line setting DPI is what the DPI will be.
+So DPI will be set to 200 by default. If you wish to use 300, simply uncomment that line. To use 150 DPI instead, simply comment out the 200 line.
+
 
 ## (Un)planned features:
 
-This script is intended to be a quick-n-dirty method to clean single PDFs before emailing them. The following is a list of some features that *could* be added later, but as it is now, this script is considered feature-complete (v1.0). I personally do not intend to add these features, since this script already does everything I need it to. Any more would be an exercise in helping others when I'm still uncertain any others will even want to use it. This may change if more people become interested in it though.
+This script is intended to be a quick-n-dirty method to clean single PDFs before emailing them. The following is a list of some features that *could* be added later, but as it is now, this script is considered feature-complete ([v1.0](https://github.com/Kerbalnut/Sanitize-PDF/releases)). 
 
  - ~~Auto-install Ghostscript 9.23 and auto-shim `gswin64c.exe`. I already have Get-Chocolatey.bat scripts I could whip together with something that calls shimgen.exe~~ Completed as of **[v1.1.0](https://github.com/Kerbalnut/Sanitize-PDF/releases/tag/v1.1.0)**
  - Auto-detect 32-bit installs and adjust itself properly. I could either make copies of all 64-bit based scripts, or use a Find-and-replace function to modify the same scripts automatically.
- - Location independence - Currently, the Sanitize-PDF.bat is intended to reside in the same folder as the source PDFs, to make it easy to drag-and-drop and have the outputs ready in the same folder. To make it capable of accepting documents from other folders brings up the question of where to save the output PDFs: where the source document is located, or where the script itself is located? Possible, but it's complexity I'm not ready to add yet.
+ - ~~Location independence - Currently, the Sanitize-PDF.bat is intended to reside in the same folder as the source PDFs, to make it easy to drag-and-drop and have the outputs ready in the same folder. To make it capable of accepting documents from other folders brings up the question of where to save the output PDFs: where the source document is located, or where the script itself is located? Possible, but it's complexity I'm not ready to add yet.~~ Completed as of **[v1.2.0](https://github.com/Kerbalnut/Sanitize-PDF/releases/tag/v1.2.0)**
  
-I do not have a proper 32-bit environment to test in, this is where most of my reluctance comes from. Spinning up VMs takes time and resources. Same goes for testing a clean Chocolatey install method, I'd have to either use VMs or uninstall Ghostscript and Chocolatey on my own machine just to test this. Perhaps if some friends are willing to let me use their machines as guinea pigs. 
+I do not have a proper 32-bit environment to test in, this is where most of my reluctance comes from. Spinning up VMs takes time and resources.
 
 ## How to help:
 
