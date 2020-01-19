@@ -40,13 +40,17 @@ REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 SET "_DPI=63"
 SET "_DPI=120"
 SET "_DPI=150"
-::SET "_DPI=170"
-::SET "_DPI=200"
+SET "_DPI=170"
+SET "_DPI=200"
+::SET "_DPI=250"
 ::SET "_DPI=300"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 :: Params4 = Choose with methods to turn on or off
+
+:: Method 2 is NOT recommended for PDFs with lots of hi-res images
+:: Method 2 is better for removing unseen (executable) Active Content, since Method 2 converts to PostScript format which does not support such features.
 
 SET "_METHOD_2=ON"
 ::SET "_METHOD_2=OFF"
@@ -416,6 +420,18 @@ IF "%_INPUT_PDF%"=="" (
 	ECHO:
 	ECHO No input file.
 	ECHO:
+	ECHO  To use %~nx0, either: 
+	ECHO     - Drag-and-Drop a PDF file to flatten onto %~nx0
+	ECHO   or,
+	ECHO     - Set the _INPUT_PDF variable at the top of this script.
+	REM >-------------------------------------------------------------------------------
+	ECHO       Hold Shift + Right-Click the PDF and select "Copy as path".
+	ECHO       Right-Click %~nx0 and select Edit.
+	ECHO       Paste the full path into the _INPUT_PDF, e.g.:
+	ECHO         SET "_INPUT_PDF="C:\Users\<User>\Documents\example document.pdf"
+	ECHO         SET "_INPUT_PDF=%%USERPROFILE%%\Documents\example document.pdf"
+	REM >-------------------------------------------------------------------------------
+	ECHO:
 	PAUSE
 	GOTO END
 )
@@ -423,6 +439,18 @@ IF "%_INPUT_PDF%"=="" (
 IF NOT EXIST "%_INPUT_PDF%" (
 	ECHO:
 	ECHO "%_INPUT_PDF%" does not exist.
+	ECHO:
+	ECHO  To use %~nx0, either: 
+	ECHO     - Drag-and-Drop a PDF file to flatten onto %~nx0
+	ECHO   or,
+	ECHO     - Set the _INPUT_PDF variable at the top of this script.
+	REM >-------------------------------------------------------------------------------
+	ECHO       Hold Shift + Right-Click the PDF and select "Copy as path".
+	ECHO       Right-Click %~nx0 and select Edit.
+	ECHO       Paste the full path into the _INPUT_PDF, e.g.:
+	ECHO         SET "_INPUT_PDF="C:\Users\<User>\Documents\example document.pdf"
+	ECHO         SET "_INPUT_PDF=%%USERPROFILE%%\Documents\example document.pdf"
+	REM >-------------------------------------------------------------------------------
 	ECHO:
 	PAUSE
 	GOTO END
@@ -866,7 +894,7 @@ ECHO Method #1 = %_OUTPUT_SIZE_KB% KB  ^(%_SIZE_DIFF_NEG% KB larger^)   "%_OUTPU
 ECHO Method #1 = %_OUTPUT_SIZE_KB% KB  ^(same size^)   "%_OUTPUT_PDF_NAME%"
 )
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-SET /A "_SIZE_DIFF=%_INPUT_SIZE%-%_OUTPUT_PS_SIZE%"
+SET /A "_SIZE_DIFF=%_INPUT_SIZE%-%_OUTPUT_PS_SIZE%" 2>nul
 SET /A "_SIZE_DIFF/=1024"
 SET /A "_SIZE_DIFF_NEG=%_SIZE_DIFF%*-1"
 IF /I "%_METHOD_2%"=="ON" (
@@ -883,11 +911,11 @@ SET /A "_SIZE_DIFF=%_INPUT_SIZE%-%_OUTPUT_LOWRES_SIZE%"
 SET /A "_SIZE_DIFF/=1024"
 SET /A "_SIZE_DIFF_NEG=%_SIZE_DIFF%*-1"
 IF %_SIZE_DIFF% GTR 0 (
-ECHO Method #3 = %_OUTPUT_LOWRES_SIZE_KB% KB  ^(%_SIZE_DIFF% KB smaller^)   "%_OUTPUT_PDF_IMAGES_NAME%"
+ECHO Method #3 = %_OUTPUT_LOWRES_SIZE_KB% KB  ^(%_SIZE_DIFF% KB smaller^)   "%_OUTPUT_PDF_IMAGES_NAME%" ^(%_DPI% DPI^)
 ) ELSE IF %_SIZE_DIFF% LSS 0 (
-ECHO Method #3 = %_OUTPUT_LOWRES_SIZE_KB% KB  ^(%_SIZE_DIFF_NEG% KB larger^)   "%_OUTPUT_PDF_IMAGES_NAME%"
+ECHO Method #3 = %_OUTPUT_LOWRES_SIZE_KB% KB  ^(%_SIZE_DIFF_NEG% KB larger^)   "%_OUTPUT_PDF_IMAGES_NAME%" ^(%_DPI% DPI^)
 ) ELSE (
-ECHO Method #3 = %_OUTPUT_LOWRES_SIZE_KB% KB  ^(same size^)   "%_OUTPUT_PDF_IMAGES_NAME%"
+ECHO Method #3 = %_OUTPUT_LOWRES_SIZE_KB% KB  ^(same size^)   "%_OUTPUT_PDF_IMAGES_NAME%" ^(%_DPI% DPI^)
 )
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ECHO:
