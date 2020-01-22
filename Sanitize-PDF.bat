@@ -25,13 +25,13 @@ SET "_INPUT_PDF=%USERPROFILE%\Documents\example document.pdf"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-:: Params2 = Output PDF and placeholder file names
+:: Params2 = Choose with methods to turn on or off
 
-SET "_OUTPUT_PDF_NAME=flattened.pdf"
-SET "_OUTPUT_PDF_PS_NAME=flattened_postscript.pdf"
-SET "_OUTPUT_PDF_IMAGES_NAME=flattened_lowres.pdf"
+:: Method 2 is NOT recommended for PDFs with lots of hi-res images
+:: Method 2 is better for removing unseen (executable) Active Content, since Method 2 converts to PostScript format which does not support such features.
 
-SET "_PLACEHOLDER_PS_NAME=flattened.ps"
+SET "_METHOD_2=ON"
+::SET "_METHOD_2=OFF"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -47,13 +47,13 @@ SET "_DPI=200"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-:: Params4 = Choose with methods to turn on or off
+:: Params4 = Output PDF and placeholder file names (don't need to be changed unless you prefer something different)
 
-:: Method 2 is NOT recommended for PDFs with lots of hi-res images
-:: Method 2 is better for removing unseen (executable) Active Content, since Method 2 converts to PostScript format which does not support such features.
+SET "_OUTPUT_PDF_NAME=flattened.pdf"
+SET "_OUTPUT_PDF_PS_NAME=flattened_postscript.pdf"
+SET "_OUTPUT_PDF_IMAGES_NAME=flattened_lowres.pdf"
 
-SET "_METHOD_2=ON"
-::SET "_METHOD_2=OFF"
+SET "_PLACEHOLDER_PS_NAME=flattened.ps"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -136,8 +136,8 @@ SET "_CHOCO_PKG=Ghostscript"
 SET "_AFTER_ADMIN_ELEVATION=%Temp%\temp-gswin64c-function.txt"
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 :: Index:
-:: 1. Check if we have Administrator privileges
-:: 2. Check if we just got commands ready from a previous run.
+:: 1. Set var = Check if we have Administrator privileges
+:: 2. Set var = Check if we just got commands ready from a previous run.
 :: 2a. Check if a Chocolatey Install was requested.
 :: 3. Chocolatey install function
 :: 4. Test if our External Function exists.
@@ -187,7 +187,6 @@ IF /I "%_CHOICES_BEFORE_ELEVATION%"=="ChocoInstall%_CHOCO_PKG%" (
 GOTO gswin64c_install_skip
 :gswin64c_install
 SET "_CHOCO_CMD_RESULT=FAILURE"
-REM ECHO DEBUGGING: _CHOCO_CMD_RESULT = "%_CHOCO_CMD_RESULT%"
 REM ECHO DEBUGGING: Installing %_CHOCO_PKG% via chocolatey...
 REM PAUSE
 choco install %_CHOCO_PKG% -y && SET "_CHOCO_CMD_RESULT=SUCCESS" && ECHO Chocolatey software installation succeeded.
