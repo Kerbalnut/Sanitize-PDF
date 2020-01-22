@@ -138,13 +138,15 @@ SET "_AFTER_ADMIN_ELEVATION=%Temp%\temp-gswin64c-function.txt"
 :: Index:
 :: 1. Set var = Check if we have Administrator privileges
 :: 2. Set var = Check if we just got commands ready from a previous run.
-:: 2a. Check if a Chocolatey Install was requested.
-:: 3. Chocolatey install function
+:: 2a. Check if a Chocolatey Install was requested. (from previous run)
+:: 3. Chocolatey install function (automatically skipped unless called)
 :: 4. Test if our External Function exists.
 :: 4a. Check if the gswin64c help command succeeds. Redirect text output to NULL but redirect error output to temp file.
 :: 4b. Check if the gswin64c.exe exists in Program Files directory
 :: 4c. Check if the gswin64c.exe exists in Program Files (x86) directory
-:: 5. Cast errors if our External Function is still not found. Attempt to install it automatically if Chocolatey or Boxstarter functions are found.
+:: 5. Attempt to install it automatically if Chocolatey or Boxstarter functions are found.
+:: 5a. Check if Boxstarter function can be found, and run if necessary
+:: 6. Cast errors if our External Function is still not found.
 ::-------------------------------------------------------------------------------
 SET "_GSWIN64C_INSTALLED=NO"
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -327,7 +329,28 @@ IF /I NOT "%_GSWIN64C_INSTALLED%"=="YES" (
 	)
 )
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-:: 5. Cast errors if our External Function is still not found. Attempt to install it automatically if Chocolatey or Boxstarter functions are found.
+:: 5. Attempt to install it automatically if Chocolatey or Boxstarter functions are found.
+::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+:: 5a. Check if Boxstarter function can be found, and run if necessary
+IF /I "%_GSWIN64C_INSTALLED%"=="NO" (
+	REM Find Boxstarter script path
+	SET "_BOXSTARTER_INSTALLER=%~dp0\BoxstarterInstall-Ghostscript.bat"
+	IF NOT EXIST "%_BOXSTARTER_INSTALLER%" SET "_BOXSTARTER_INSTALLER=%~dp0\install\BoxstarterInstall-Ghostscript.bat"
+	IF NOT EXIST "%_BOXSTARTER_INSTALLER%" SET "_BOXSTARTER_INSTALLER=%USERPROFILE%\Downloads\Sanitize-PDF-master.zip\Sanitize-PDF-master\install\BoxstarterInstall-Ghostscript.bat"
+	IF NOT EXIST "%_BOXSTARTER_INSTALLER%" SET "_BOXSTARTER_INSTALLER=%USERPROFILE%\Downloads\Sanitize-PDF-master\Sanitize-PDF-master\install\BoxstarterInstall-Ghostscript.bat"
+	IF NOT EXIST "%_BOXSTARTER_INSTALLER%" SET "_BOXSTARTER_INSTALLER=%USERPROFILE%\Downloads\Sanitize-PDF-1.2.2.zip\Sanitize-PDF-1.2.2\install\BoxstarterInstall-Ghostscript.bat"
+	IF NOT EXIST "%_BOXSTARTER_INSTALLER%" SET "_BOXSTARTER_INSTALLER=%USERPROFILE%\Downloads\Sanitize-PDF-1.2.2\Sanitize-PDF-1.2.2\install\BoxstarterInstall-Ghostscript.bat"
+	REM Run Boxstarter script
+	IF EXIST "%_BOXSTARTER_INSTALLER%" (
+		REM Boxstarter auto-install script exists, and it needs to be run
+		REM ECHO DEBUGGING: Boxstarter script found: 
+		REM ECHO DEBUGGING: "%_BOXSTARTER_PATH%"
+	) ELSE (
+		REM ECHO DEBUGGING: Our dependency still needs to be installed, but a Boxstarter script cannot be found.
+	)
+)
+::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+:: 6. Cast errors if our External Function is still not found.
 REM ECHO DEBUGGING: Call errors and installers if script is still not found . . .
 IF /I "%_GSWIN64C_INSTALLED%"=="NO" (
 	ECHO:
