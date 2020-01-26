@@ -35,6 +35,8 @@ As you can see from the above examples, the resulting file size of each method c
 
 > As of [**v1.2.1** or greater](https://github.com/Kerbalnut/Sanitize-PDF/releases) file size comparison summary data will be printed at the end of script execution, for easy inspection. 
 
+After the script has ended, if you "Press ANY key..." it will delete the placeholder PostScript file. Alternatively, you can close the script window at this point and the postscript.ps file will remain for inspection.
+
 ## Helper functions
 
 If you frequently update the source PDF and want to rename the output to the same file name repeatedly, the script **AutoRenamePDF.bat** will do that automatically. Rename the script to the file name you want. For example, **"My New PDF Name.bat"**:
@@ -63,14 +65,6 @@ For the first motivation however, where we care more about **removing malware** 
 Still afraid of no ghost? You didn't read the script - TheRegister.co.uk](https://www.theregister.co.uk/2019/01/24/pdf_ghostscript_vulnerability/)
 > **FYI:** This is not a 100% perfect method for removing malware. A vulnerability was found present in all GhostScript versions up to '**9.26**'. If you do not trust the source of the PDF, do not open it. This software is provided "as-is" with no warranty. See **Disclaimer** at the bottom of this README and the [LICENSE](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/LICENSE) for this repo.
 > As of this writing, [GhostScript 9.50](https://www.ghostscript.com/Ghostscript_9.50.html) is available.
-
-### More info about GhostScript options:
-
-- [More info on Ghostscript devices](https://ghostscript.com/doc/current/Devices.htm)
-- [More info on PDF switches](https://www.ghostscript.com/doc/9.23/Use.htm#PDF)
-- [LOTS more info on PDF switches](https://www.ghostscript.com/doc/9.23/VectorDevices.htm#PDFWRITE) (thank you again to @symcbean from [stackexchange][1] for distilling this down into something workable!)
-
-After the script has ended, if you "Press ANY key..." it will delete the placeholder PostScript file. Alternatively, you can close the script window at this point and the postscript.ps file will remain for inspection.
 
 # How to Install
 
@@ -119,14 +113,6 @@ There are 3 "methods" used in the Ghostscript invocation phase:
 2. Convert PDF-to-PostScript-to-PDF, using devices `ps2write` and `pdfwrite`. Although this seems like a saner method since it fully converts a PDF to a PostScript 2 document and writes it to disk, then takes that PS document as input and converts it to PDF again, in my testing the final PDF ends up *larger* than the original. This may be understandable since the intermediary PostScript document ends up around 20-30 MB in size generated from a 2-3 MB PDF document, but still not what we're looking for.
 3. Convert PDF-to-PDF and downsize all images, using `pdfwrite` device. This is the method recommended by the [Security SE question][1] and surprise surprise, it's the one that's been the most successful for me.
 
-[More info on Ghostscript devices](https://ghostscript.com/doc/current/Devices.htm)
-
-[More info on PDF switches](https://www.ghostscript.com/doc/9.23/Use.htm#PDF)
-
-[LOTS more info on PDF switches](https://www.ghostscript.com/doc/9.23/VectorDevices.htm#PDFWRITE) (thank you again to @symcbean from [stackexchange][1] for distilling this down into something workable!)
-
-After the script has ended, if you "Press ANY key..." it will delete the placeholder PostScript file. Alternatively, you can close the script window at this point and the postscript.ps file will remain for inspection.
-
 ### How-to-modify:
 
 All input variables are set at the top of Sanitize-PDF.bat. You can change the names of the 3 final output PDFs, and the PostScript intermediary file, if you like.
@@ -147,12 +133,6 @@ So DPI will be set to 200 by default. If you wish to use 300, simply uncomment t
 
 This script is intended to be a quick-n-dirty method to clean single PDFs before emailing them. The following is a list of some features that *could* be added later, but as it is now, this script is considered feature-complete ([v1.0](https://github.com/Kerbalnut/Sanitize-PDF/releases)). **Note:** Officially, new features and bugfixes will be handled using [GitHub's Issue tracker](https://github.com/Kerbalnut/Sanitize-PDF/issues).
 
-- ~~Auto-install Ghostscript 9.23 and auto-shim `gswin64c.exe`. I already have Get-Chocolatey.bat scripts I could whip together with something that calls shimgen.exe~~ Completed as of **[v1.1.0](https://github.com/Kerbalnut/Sanitize-PDF/releases/tag/v1.1.0)**
-- ~~Auto-detect 32-bit installs and adjust itself properly. I could either make copies of all 64-bit based scripts, or use a Find-and-replace function to modify the same scripts automatically.~~ Tracked in GitHub [Issue #2](https://github.com/Kerbalnut/Sanitize-PDF/issues/2)
-- ~~Location independence - Currently, the Sanitize-PDF.bat is intended to reside in the same folder as the source PDFs, to make it easy to drag-and-drop and have the outputs ready in the same folder. To make it capable of accepting documents from other folders brings up the question of where to save the output PDFs: where the source document is located, or where the script itself is located? Possible, but it's complexity I'm not ready to add yet.~~ Completed as of **[v1.2.0](https://github.com/Kerbalnut/Sanitize-PDF/releases/tag/v1.2.0)**
-- Add a [`Install-Chocolatey.bat`](https://github.com/Kerbalnut/Batch-Tools-SysAdmin/blob/master/Tools/Get-Chocolatey.bat) or [`BoxstarterInstall-Ghostscript.bat`](https://github.com/Kerbalnut/Batch-Tools-SysAdmin/blob/master/BoxstarterInstall-template.bat) helper script/function to this repository to enable automatic dependency (Ghostscript) installation. I already use these scripts tracked elsewhere in the [Batch-Tools-Sysadmin](https://github.com/Kerbalnut/Batch-Tools-SysAdmin) repository, which is quickly becoming convoluted and messy, and needs to be split into several smaller, inter-dependent child repositories. So the question is how to track repo dependencies or shared resources between Github projects, sub-repos, child-trees... A quicker solution may be to copy and paste one of those scripts here for now while I get the rest of that sorted. **Tracked in GitHub** [**Issue #3**](https://github.com/Kerbalnut/Sanitize-PDF/issues/3)
-- **Documentation improvement.** Most of the comments in the script (mainly in the top parameters block) haven't been edited since the original 2018 version, and may be unfriendly to non-technical users who just wish to use this script once to clean up a PDF quickly and fix the "active content" email bounce-back error they've been getting. This includes install instructions in this very README, which could be explained a bit better in a *"don't make me think"* sort of way. I try to avoid writing such instructional guides anymore, but perhaps this will appeal to a larger audience, and I tend to only use this tool once every 2 years myself (when I'm sending out resumes) so I forget what the hell I was doing here regularly as well. **Tracked in GitHub** [**Issue #4**](https://github.com/Kerbalnut/Sanitize-PDF/issues/4)
-
 ## Thanks to:
 
 - Go to [Secruity.SE][1] and upvote that question for having such an awesome, accurate, functional answer in it. I basically copied and pasted their work verbatim.
@@ -165,10 +145,15 @@ This script is intended to be a quick-n-dirty method to clean single PDFs before
 1. Please send me any [bug reports](https://github.com/Kerbalnut/Sanitize-PDF/issues) and [feature requests](https://github.com/Kerbalnut/Sanitize-PDF/issues) through GitHub. No promises on delivery dates though.
 2. [Fork this repository](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-forks) on GitHub, then [clone your fork](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github) to your local machine. I recommend installing both [GitHub Desktop](https://desktop.github.com/) and [TortoiseGit](https://tortoisegit.org/) to help you interact with git repos, or [VS Code](https://code.visualstudio.com/) for an all-in-one solution with it being an IDE (code editor), split-screen markdown editor, and git-integrated. (Or all three, which can all be installed via [chocolatey](https://chocolatey.org/install): `choco install github-desktop tortoisegit vscode -y`) In your forked repo, you can create/publish/merge branches, pull updates from this parent repo, and when ready to share your changes, submit a [pull request from your fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
 
-### Notes if contributing Pull Requests
+### More info about GhostScript options:
+
+- [More info on Ghostscript devices](https://ghostscript.com/doc/current/Devices.htm)
+- [More info on PDF switches](https://www.ghostscript.com/doc/9.23/Use.htm#PDF)
+- [LOTS more info on PDF switches](https://www.ghostscript.com/doc/9.23/VectorDevices.htm#PDFWRITE) (thank you again to @symcbean from [stackexchange][1] for distilling this down into something workable!)
+
+### Notes if contributing Pull Requests:
 
 There are essentially 3 parts to this script even though it's not formatted to look that way, but referring to it this way will make it easier to talk about. The first part captures variables (and deletes waste) for use in the rest of the script. The second part is where ghostscript is invoked (gswin64c.exe) to execute several methods of removing "active content" as found in the [Security SE question][1]. The third and last part compares file sizes as a quick and simple method to show if the PDFs successfully lost any information from the conversion process (which is exactly what we want, we're trying to remove "active content" which we didn't intend to include, yet may be present in our PDFs anyway).
-
 
 ## Disclaimer:
 
