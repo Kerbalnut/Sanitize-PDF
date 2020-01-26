@@ -1,4 +1,5 @@
 # Sanitize-PDF.bat
+
 Sanitize or Flatten PDF documents to remove "active content" so they pass through corporate firewalls better.
 
 If you create multi-page PDFs with many pictures and graphics (such as a portfolio) and email them out to companies with strict firewalls (such as an HR department) you may have had those emails bounce back with an error message such as **"error: messages with active content/attachments (e.g. Office macros) will not be transmitted."**
@@ -11,7 +12,74 @@ No matter how they gain them, there is a surprising lack of tools available to s
 How do I remove active content from a pdf file](https://forums.adobe.com/thread/1644285)
 - [Step 4:  Preparing a PDF For Posting - HHS.gov](https://www.hhs.gov/web/section-508/making-files-accessible/create-accessible-pdfs/step-4/index.html)
 
-Another (free) option is Ghostscript, "an interpreter for the PostScript language and for PDF". [PostScript](https://www.adobe.com/products/postscript.html) [2](https://en.wikipedia.org/wiki/PostScript) is old enough that it does not support embedded Flash or JavaScript exploits that may be present in modern PDFs. This question from security.stackexchange.com lays out the method employed here: [**Effectiveness of flattening a PDF to remove malware**][1].
+Another (free) option is Ghostscript, "an interpreter for the PostScript language and for PDF". [PostScript](https://www.adobe.com/products/postscript.html) [2](https://en.wikipedia.org/wiki/PostScript) is old enough that it does not support embedded Flash or JavaScript exploits that may be present in modern PDFs. This question from **security.stackexchange.com** lays out the method employed here: [**Effectiveness of flattening a PDF to remove malware**][1].
+
+# What it is
+
+**Sanitize-PDF.bat** is a Batch file (Windows only) which runs as a wrapper for [GhostScript](https://www.ghostscript.com/), a command-line PDF/PostScript "printer" (converter). The original purpose of this script was fixing recently coverted-to-PDF Resume/CV documents, quickly, by **dragging-and-dropping** a PDF file onto a .bat script. Then GhostScript is called with various command-line options applied, currently using 3 different methods to "clean" the PDFs of Active Content.
+
+# How to Use
+
+Once installed, you simply drag-and-drop a PDF onto **Sanitize-PDF.bat** and it will call [GhostScript](https://www.ghostscript.com/) with 3 different sets of command line options, which will produce 3 different files.
+
+![Example video of Sanitize-PDF.bat in use.][Sanitize PDF demonstration]
+
+There are 3 "methods" used in the Ghostscript invocation phase:
+
+1. Convert **PDF-to-PDF** using the ghostscript device `pdfwrite`. ~~Output usually has a smaller file size, suggesting this method does remove things.~~ As you can see in the above example video, this is not always true. Sometimes the output file will be larger. *By default,* this produces **flattened.pdf**
+2. Convert **PDF-to-PostScript-to-PDF**, using devices `ps2write` and `pdfwrite`. Although this is the recommended method from the [security.SE question][1] to remove malware since it fully converts a PDF file to a PostScript 2 file (which inherently does not support Active Content) and writes it to disk, then converts that PS document to PDF again, in my testing ~~the final PDF ends up *larger* than the original.~~* This may be understandable since the intermediary PostScript document ends up around 20-30 MB in size generated from a 2-3 MB PDF document. * = As you can see in the above example video, this is not always true either, sometimes the output file is smaller. *By default,* this produces a **flattened.ps** PostScript placeholder file, then uses that to generate **flattened_postscript.pdf**
+    > This method also takes a significantly longer time to execute. In the above example video, the execution time of Method #2 is edited for demostration purposes. To disable Method #2 execution, edit the parameter in **Sanitize-PDF.bat** to `SET "_METHOD_2=OFF"`. To re-enable, `SET "_METHOD_2=ON"`
+3. Convert **PDF-to-PDF and downsize all images**, using the `pdfwrite` device. This method is also recommended by the [Security SE question][1] to remove any image-based malware. So in theory, it should always produce a smaller output file. However if the input PDF document contains absolutely no image data, that may not be true either. *By default,* this produces **flattened_lowres.pdf**
+
+As you can see from the above examples, the resulting file size of each method can vary wildly, depending on the input PDF. The output files can then each be inspected, and the one that best fits the requirements can be copied and renamed for use.
+
+> As of [**v1.2.1** or greater](https://github.com/Kerbalnut/Sanitize-PDF/releases) file size comparison summary data will be printed at the end of script execution, for easy inspection. 
+
+## Helper functions
+
+If you frequently update the source PDF and want to rename the output to the same file name repeatedly, the script **AutoRenamePDF.bat** will do that automatically. Rename the script to the file name you want. For example, **"My New PDF Name.bat"**:
+
+![Example video of AutoRenamePDF.bat in use.][Auto Rename PDF demonstration]
+
+will convert any .pdf file dropped on it to **"My New PDF Name.pdf"**
+
+## Choosing a method
+
+There's conflicting motivations here, which may inspire different preferences for each of these methods. While both perspectives want to remove "Active Content" from the PDF, my guess is that you either want to:
+
+- **Remove malware** from unfamiliar PDF documents as completely as possible.
+- **Reduce file size** and shed any extra "Active Content" a PDF file you produced may contain, so it's more likely to successfully pass through firewalls when you email it later.
+
+Both want to remove Active Content, but either you yourself produced the file, and *know* for the most part, it's safe. Or, you picked up a PDF file from the internet or email, and want to make sure it's safe before opening.
+
+*Sanitize-PDF.bat* was written mainly in the spirit of the **second** motivation. We produced the file, we know it's not intentionally malicious. We just want to make email server firewalls believe that too. For that, we generally want to pick whichever output file is the smallest.
+
+For the first motivation however, where we care more about **removing malware** than PDF file size, it is still possible to achieve this if you run the *Sanitize-PDF.bat* script twice. 
+
+1. After the first run, Method #2 will produce a **flattened_postscript.pdf** file that has been completely converted to PostScript 2 (which does not support Active Content) and back to PDF. 
+2. Then, if you drop **flattened_postscript.pdf** back into **Sanitize-PDF.bat** (remember to disable Method #2 execution option first for faster run time), after it has completed Method #3 will produce **flattened_lowres.pdf** which has then also downsized picture resolutions, to protect against image-based malware.
+
+> [**2019-01-24** World's favourite open-source PDF interpreter needs patching (again)
+Still afraid of no ghost? You didn't read the script - TheRegister.co.uk](https://www.theregister.co.uk/2019/01/24/pdf_ghostscript_vulnerability/)
+> **FYI:** This is not a 100% perfect method at removing malware. A vulnerability was found present in all GhostScript versions up to '**9.26**'. This software is provided "as-is" with no warranty. See **Disclaimer** at the bottom of this ReadMe and [LICENSE](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/LICENSE) for this repo.
+> As of this writing, [GhostScript 9.50](https://www.ghostscript.com/Ghostscript_9.50.html) is available.
+
+### More info about GhostScript options:
+
+- [More info on Ghostscript devices](https://ghostscript.com/doc/current/Devices.htm)
+- [More info on PDF switches](https://www.ghostscript.com/doc/9.23/Use.htm#PDF)
+- [LOTS more info on PDF switches](https://www.ghostscript.com/doc/9.23/VectorDevices.htm#PDFWRITE) (thank you again to @symcbean from [stackexchange][1] for distilling this down into something workable!)
+
+After the script has ended, if you "Press ANY key..." it will delete the placeholder PostScript file. Alternatively, you can close the script window at this point and the postscript.ps file will remain for inspection.
+
+# How to Install
+
+To get started, you need 2 pieces of softare. 
+
+1. is [**GhostScript**](https://chocolatey.org/packages/Ghostscript), a command-line tool for converting PDF and PostScript files, that needs to be installed on your local system.
+2. is the Batch script file [**Sanitize-PDF.bat**](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/Sanitize-PDF.bat), which you can place anywhere, on your Desktop, in your My Documents folder, etc. After **GhostScript** is installed, **Sanitize-PDF.bat** can be used to automatically call it with the necessary command-line parameters to generate several (3, at this moment) versions of that PDF document, converted with different methods to remove Active Content.
+
+---
 
 ## Dependencies:
 
@@ -94,7 +162,7 @@ This script is intended to be a quick-n-dirty method to clean single PDFs before
 
 ## How to Contribute:
 
-1. Send me [feature requests](https://github.com/Kerbalnut/Sanitize-PDF/issues) and [bug reports](https://github.com/Kerbalnut/Sanitize-PDF/issues) if you like. No promises on delivery dates though.
+1. Please send me any [bug reports](https://github.com/Kerbalnut/Sanitize-PDF/issues) and [feature requests](https://github.com/Kerbalnut/Sanitize-PDF/issues) through GitHub. No promises on delivery dates though.
 2. [Fork this repository](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-forks) on GitHub, then [clone your fork](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github) to your local machine. I recommend installing both [GitHub Desktop](https://desktop.github.com/) and [TortoiseGit](https://tortoisegit.org/) to help you interact with git repos, or [VS Code](https://code.visualstudio.com/) for an all-in-one solution with it being an IDE (code editor), split-screen markdown editor, and git-integrated. (Or all three, which can all be installed via [chocolatey](https://chocolatey.org/install): `choco install github-desktop tortoisegit vscode -y`) In your forked repo, you can create/publish/merge branches, pull updates from this parent repo, and when ready to share your changes, submit a [pull request from your fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
 
 ## Disclaimer:
@@ -103,3 +171,13 @@ This script is not intended to remove all/any malware from any PDF or any other 
 
 [1]: https://security.stackexchange.com/questions/103323/effectiveness-of-flattening-a-pdf-to-remove-malware
 [2]: https://pdfsam.org/download-pdfsam-basic/
+
+<!-- [Sanitize PDF demonstration]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "v1.2.1 Some parts of this example video have been sped up from real-time execution." -->
+
+[Sanitize PDF demonstration]: /documentation/media/SanitizePDF_ExecutionDemo.gif "v1.2.1 Some parts of this example video have been sped up from real-time execution."
+
+[Auto Rename PDF demonstration]: /documentation/media/AutoRenameExample.gif "Rename this script to whatever you want, and it will create a renamed copy of whatever file you drag and drop onto it."
+
+
+
+
