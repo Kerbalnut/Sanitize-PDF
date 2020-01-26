@@ -103,16 +103,6 @@ Once finished, the Sanitize-PDF.bat will have generated 3 new PDF documents in t
 
 Sanitize-PDF.bat does not change or delete the original source document dropped on it.
 
-### How-it-works:
-
-There are essentially 3 parts to this script even though it's not formatted to look that way, but referring to it this way will make it easier to talk about. The first part captures variables (and deletes waste) for use in the rest of the script. The second part is where ghostscript is invoked (gswin64c.exe) to execute several methods of removing "active content" as found in the [Security SE question][1]. The third and last part compares file sizes as a quick and simple method to show if the PDFs successfully lost any information from the conversion process (which is exactly what we want, we're trying to remove "active content" which we didn't intend to include, yet may be present in our PDFs anyway).
-
-There are 3 "methods" used in the Ghostscript invocation phase:
-
-1. Convert PDF-to-PDF using the ghostscript engine (assuming it works as a PostScript engine), using device `pdfwrite`. Output usually has a smaller file size, suggesting this method does remove things.
-2. Convert PDF-to-PostScript-to-PDF, using devices `ps2write` and `pdfwrite`. Although this seems like a saner method since it fully converts a PDF to a PostScript 2 document and writes it to disk, then takes that PS document as input and converts it to PDF again, in my testing the final PDF ends up *larger* than the original. This may be understandable since the intermediary PostScript document ends up around 20-30 MB in size generated from a 2-3 MB PDF document, but still not what we're looking for.
-3. Convert PDF-to-PDF and downsize all images, using `pdfwrite` device. This is the method recommended by the [Security SE question][1] and surprise surprise, it's the one that's been the most successful for me.
-
 ### How-to-modify:
 
 All input variables are set at the top of Sanitize-PDF.bat. You can change the names of the 3 final output PDFs, and the PostScript intermediary file, if you like.
@@ -129,10 +119,6 @@ SET "_DPI=200"
 
 So DPI will be set to 200 by default. If you wish to use 300, simply uncomment that line. To use 150 DPI instead, simply comment out the 200 line.
 
-## (Un)planned features:
-
-This script is intended to be a quick-n-dirty method to clean single PDFs before emailing them. The following is a list of some features that *could* be added later, but as it is now, this script is considered feature-complete ([v1.0](https://github.com/Kerbalnut/Sanitize-PDF/releases)). **Note:** Officially, new features and bugfixes will be handled using [GitHub's Issue tracker](https://github.com/Kerbalnut/Sanitize-PDF/issues).
-
 ## Thanks to:
 
 - Go to [Secruity.SE][1] and upvote that question for having such an awesome, accurate, functional answer in it. I basically copied and pasted their work verbatim.
@@ -142,8 +128,8 @@ This script is intended to be a quick-n-dirty method to clean single PDFs before
 
 ## How to Contribute:
 
-1. Please send me any [bug reports](https://github.com/Kerbalnut/Sanitize-PDF/issues) and [feature requests](https://github.com/Kerbalnut/Sanitize-PDF/issues) through GitHub. No promises on delivery dates though.
-2. [Fork this repository](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-forks) on GitHub, then [clone your fork](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github) to your local machine. I recommend installing both [GitHub Desktop](https://desktop.github.com/) and [TortoiseGit](https://tortoisegit.org/) to help you interact with git repos, or [VS Code](https://code.visualstudio.com/) for an all-in-one solution with it being an IDE (code editor), split-screen markdown editor, and git-integrated. (Or all three, which can all be installed via [chocolatey](https://chocolatey.org/install): `choco install github-desktop tortoisegit vscode -y`) In your forked repo, you can create/publish/merge branches, pull updates from this parent repo, and when ready to share your changes, submit a [pull request from your fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
+1. Please send me any [bug reports][3] and [feature requests][3] through GitHub, just use the [Issue tracker][3] with the **bug**, **enhancement**, or **question** [labels](https://github.com/Kerbalnut/Sanitize-PDF/labels). No promises on delivery dates though!
+2. To contribute directly, [fork this repository](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-forks) on GitHub, then [clone your fork](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github) to your local machine. I recommend installing both [GitHub Desktop](https://desktop.github.com/) and [TortoiseGit](https://tortoisegit.org/) to help you interact with git repos, or [VS Code](https://code.visualstudio.com/) for an all-in-one solution with it being an IDE (code editor), split-screen markdown editor, and git-integrated. (Or all three, which can all be installed via [chocolatey](https://chocolatey.org/install): `choco install github-desktop tortoisegit vscode -y`) In your forked repo, you can create/publish/merge branches, pull updates from this parent repo, and when ready to share your changes, submit a [pull request from your fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
 
 ### More info about GhostScript options:
 
@@ -169,6 +155,7 @@ GhostScript is [distributed](https://www.ghostscript.com/download/gsdnld.html) w
 
 [1]: https://security.stackexchange.com/questions/103323/effectiveness-of-flattening-a-pdf-to-remove-malware
 [2]: https://pdfsam.org/download-pdfsam-basic/
+[3]: https://github.com/Kerbalnut/Sanitize-PDF/issues
 
 <!-- [Sanitize PDF demonstration]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "v1.2.1 Some parts of this example video have been sped up from real-time execution." -->
 
