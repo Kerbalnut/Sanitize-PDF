@@ -52,16 +52,16 @@ There's conflicting motivations here, which may inspire different preferences fo
 
 Both want to remove Active Content, but either you yourself produced the file, and *know* for the most part, it's safe. Or, you picked up a PDF file from the internet or email, and want to make sure it's safe before opening.
 
-*Sanitize-PDF.bat* was written mainly in the spirit of the **second** motivation. We produced the file, we know it's not intentionally malicious. We just want to make email server firewalls believe that too. For that, we generally want to pick whichever output file is the smallest.
+*Sanitize-PDF.bat* was written mainly in the spirit of the **second** motivation. We produced the file, we know it's not intentionally malicious. We just want email server firewalls more accepting of them. For that scenario, we also generally want to pick whichever output file is the smallest.
 
 For the first motivation however, where we care more about **removing malware** than PDF file size, it is still possible to achieve this if you run the *Sanitize-PDF.bat* script twice. 
 
-1. After the first run, Method #2 will produce a **flattened_postscript.pdf** file that has been completely converted to PostScript 2 (which does not support Active Content) and back to PDF. 
-2. Then, if you drop **flattened_postscript.pdf** back into **Sanitize-PDF.bat** (remember to disable Method #2 execution option first for faster run time), after it has completed Method #3 will produce **flattened_lowres.pdf** which has then also downsized picture resolutions, to protect against image-based malware.
+1. After the first run, Method #2 will produce a **flattened_postscript.pdf** file that has been completely converted to PostScript 2 (which does not support Active Content) and back to PDF again. 
+2. Then, if you drop **flattened_postscript.pdf** back into **Sanitize-PDF.bat** (remember to disable Method #2 execution option first for faster run time), after it has completed, Method #3 will have produced **flattened_lowres.pdf** which then has also down-sized picture resolutions, to protect against image-based malware.
 
 > [**2019-01-24** World's favourite open-source PDF interpreter needs patching (again)
 Still afraid of no ghost? You didn't read the script - TheRegister.co.uk](https://www.theregister.co.uk/2019/01/24/pdf_ghostscript_vulnerability/)
-> **FYI:** This is not a 100% perfect method at removing malware. A vulnerability was found present in all GhostScript versions up to '**9.26**'. This software is provided "as-is" with no warranty. See **Disclaimer** at the bottom of this ReadMe and [LICENSE](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/LICENSE) for this repo.
+> **FYI:** This is not a 100% perfect method for removing malware. A vulnerability was found present in all GhostScript versions up to '**9.26**'. If you do not trust the source of the PDF, do not open it. This software is provided "as-is" with no warranty. See **Disclaimer** at the bottom of this README and the [LICENSE](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/LICENSE) for this repo.
 > As of this writing, [GhostScript 9.50](https://www.ghostscript.com/Ghostscript_9.50.html) is available.
 
 ### More info about GhostScript options:
@@ -76,8 +76,8 @@ After the script has ended, if you "Press ANY key..." it will delete the placeho
 
 To get started, you need 2 pieces of softare. 
 
-1. is [**GhostScript**](https://chocolatey.org/packages/Ghostscript), a command-line tool for converting PDF and PostScript files, that needs to be installed on your local system.
-2. is the Batch script file [**Sanitize-PDF.bat**](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/Sanitize-PDF.bat), which you can place anywhere, on your Desktop, in your My Documents folder, etc. After **GhostScript** is installed, **Sanitize-PDF.bat** can be used to automatically call it with the necessary command-line parameters to generate several (3, at this moment) versions of that PDF document, converted with different methods to remove Active Content.
+1. The first is [**GhostScript**](https://chocolatey.org/packages/Ghostscript), a command-line tool for converting PDF and PostScript files, that needs to be installed on your local system.
+2. The second is the Batch script file [**Sanitize-PDF.bat**](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/Sanitize-PDF.bat), which you can place anywhere, on your Desktop, in your My Documents folder, etc. After **GhostScript** is installed, **Sanitize-PDF.bat** can be used to automatically call it with the necessary command-line parameters to generate several (3, at this moment) versions of that PDF document, converted with different methods to remove Active Content.
 
 ---
 
@@ -165,9 +165,22 @@ This script is intended to be a quick-n-dirty method to clean single PDFs before
 1. Please send me any [bug reports](https://github.com/Kerbalnut/Sanitize-PDF/issues) and [feature requests](https://github.com/Kerbalnut/Sanitize-PDF/issues) through GitHub. No promises on delivery dates though.
 2. [Fork this repository](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-forks) on GitHub, then [clone your fork](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github) to your local machine. I recommend installing both [GitHub Desktop](https://desktop.github.com/) and [TortoiseGit](https://tortoisegit.org/) to help you interact with git repos, or [VS Code](https://code.visualstudio.com/) for an all-in-one solution with it being an IDE (code editor), split-screen markdown editor, and git-integrated. (Or all three, which can all be installed via [chocolatey](https://chocolatey.org/install): `choco install github-desktop tortoisegit vscode -y`) In your forked repo, you can create/publish/merge branches, pull updates from this parent repo, and when ready to share your changes, submit a [pull request from your fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
 
+### Notes if contributing Pull Requests
+
+There are essentially 3 parts to this script even though it's not formatted to look that way, but referring to it this way will make it easier to talk about. The first part captures variables (and deletes waste) for use in the rest of the script. The second part is where ghostscript is invoked (gswin64c.exe) to execute several methods of removing "active content" as found in the [Security SE question][1]. The third and last part compares file sizes as a quick and simple method to show if the PDFs successfully lost any information from the conversion process (which is exactly what we want, we're trying to remove "active content" which we didn't intend to include, yet may be present in our PDFs anyway).
+
+
 ## Disclaimer:
 
-This script is not intended to remove all/any malware from any PDF or any other document, and makes no such promises, and offers no warranty. Use at your own risk. See the [LICENSE](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/LICENSE) attached to this repository for full legal information. I've chosen the MIT license so this repo may be cloned, modified, and distributed within any organization free of charge, the only requirement being preservation of copyright and license notices. See [choosealicense.com/licenses/mit/](https://choosealicense.com/licenses/mit/) for a quick overview analysis of this license. However if you do make any signficant improvements that you don't mind sharing, you're always encouraged to submit a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) through GitHub to help contribute to this project.
+This script is not intended to remove all/any malware from any PDF or any other document, and makes no such promises, and offers no warranty. Use at your own risk. 
+
+See the [LICENSE](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/LICENSE) attached to this repository for full legal information. I've chosen the MIT license so this repo may be cloned, modified, and distributed within any organization free of charge, the only requirement being preservation of copyright and license notices. See [choosealicense.com/licenses/mit/](https://choosealicense.com/licenses/mit/) for a quick overview analysis of this license. 
+
+However if you do make any signficant improvements that you don't mind sharing, you're always encouraged to submit a [Pull Request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) through GitHub to help contribute to this project.
+
+GhostScript is [distributed](https://www.ghostscript.com/download/gsdnld.html) with the [AGPLv3](https://www.gnu.org/licenses/agpl-3.0.html) ([**GNU Affero General Public License v3.0**](https://choosealicense.com/licenses/agpl-3.0/)) [license](https://www.ghostscript.com/license.html), a [GPL-compatible](https://www.gnu.org/licenses/gpl-faq.html#WhatDoesCompatMean) license. As of right now, I do not plan to re-distribute GhostScript (Tracked in [**Issue #7**](https://github.com/Kerbalnut/Sanitize-PDF/issues/7)), but I'm open to comments. If it would still be easier for people to use this automation script with *ghostscript* included with it, even after I release the coming install-automation-helper scripts (#3), and define manual install methods better in the README refactor (#4), then I suppose I'll think about it.
+
+
 
 [1]: https://security.stackexchange.com/questions/103323/effectiveness-of-flattening-a-pdf-to-remove-malware
 [2]: https://pdfsam.org/download-pdfsam-basic/
