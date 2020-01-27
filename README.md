@@ -126,6 +126,28 @@ To get started, you need 2 pieces of softare.
 
 Choose one of the following 4 install methods (rated by ease-of-use):
 
+
+- [Sanitize-PDF.bat](#sanitize-pdfbat)
+- [Index:](#index)
+- [What it is](#what-it-is)
+- [How to Use](#how-to-use)
+	- [Helper functions](#helper-functions)
+	- [Choosing a method](#choosing-a-method)
+	- [How to modify/customize the script:](#how-to-modifycustomize-the-script)
+- [How to Install](#how-to-install)
+	- [#1. To automatically install everything](#1-to-automatically-install-everything)
+		- [How to choose which installer method:](#how-to-choose-which-installer-method)
+	- [#2. If you already have Chocolatey installed](#2-if-you-already-have-chocolatey-installed)
+			- [Post-install instructions:](#post-install-instructions)
+	- [#3. To manually install GhostScript yourself (required dependency)](#3-to-manually-install-ghostscript-yourself-required-dependency)
+	- [#4. If you already have GhostScript installed](#4-if-you-already-have-ghostscript-installed)
+		- [Handling download errors](#handling-download-errors)
+- [Thanks to:](#thanks-to)
+- [How to Contribute:](#how-to-contribute)
+	- [More info about GhostScript options:](#more-info-about-ghostscript-options)
+		- [Notes if contributing Pull Requests:](#notes-if-contributing-pull-requests)
+- [Disclaimer:](#disclaimer)
+
 ## #1. To automatically install everything
 
 Head over to the [**Releases**][4] page to find the most recent stable versions, find the [latest one](https://github.com/Kerbalnut/Sanitize-PDF/releases/latest), and download the **Source code (zip)**.
