@@ -66,6 +66,36 @@ Still afraid of no ghost? You didn't read the script - TheRegister.co.uk](https:
 > **FYI:** This is not a 100% perfect method for removing malware. A vulnerability was found present in all GhostScript versions up to '**9.26**'. If you do not trust the source of the PDF, do not open it. This software is provided "as-is" with no warranty. See **Disclaimer** at the bottom of this README and the [LICENSE](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/LICENSE) for this repo.
 > As of this writing, [GhostScript 9.50](https://www.ghostscript.com/Ghostscript_9.50.html) is available.
 
+---
+
+## How-to-Use:
+
+With *Ghostscript* installed, and gswin64c.exe either *shimmed* or added to the *PATH variable* as described above, Sanitize-PDF.bat is ready to use.
+
+Either drag-and-drop a pdf file onto **Sanitize-PDF.bat** or, edit the `_INPUT_PDF` variable in the :Parameters section at the very top of the script and run it. That's it!
+
+Once finished, the Sanitize-PDF.bat will have generated 3 new PDF documents in the same folder as the input PDF. These three new documents are the result of the different methods employed to sanitize or flatten the original, as described below.
+
+Sanitize-PDF.bat does not change or delete the original source document dropped on it.
+
+### How-to-modify:
+
+All input variables are set at the top of Sanitize-PDF.bat. You can change the names of the 3 final output PDFs, and the PostScript intermediary file, if you like.
+
+To change how images are downsized (only used in the 3rd method as described above), the `_DPI` variable can be changed to whatever you like. I have several lines setting this var to different values, so you only have to comment out `::` the last lines you don't wish to use; it doesn't matter if you comment out lines above the `_DPI` values you wish to use. By default this script has:
+
+```CMD
+SET "_DPI=63"
+SET "_DPI=120"
+SET "_DPI=150"
+SET "_DPI=200"
+::SET "_DPI=300"
+```
+
+So DPI will be set to 200 by default. If you wish to use 300, simply uncomment that line. To use 150 DPI instead, simply comment out the 200 line.
+
+---
+
 # How to Install
 
 To get started, you need 2 pieces of softare. 
@@ -150,60 +180,14 @@ If you still get firewall/anti-virus/anti-malware/proxy services blocking even y
 5. Save as **"Sanitize-PDF.bat"**
 	- If you receive a warning that changing file extensions will corrupt the document, click **Yes** to proceed with the change. The file extension **must** be changed to .bat for the script to work.
 
----
-
-## Dependencies:
-
- 1. **Ghostscript 9.23** - [Chocolatey package](https://chocolatey.org/packages/Ghostscript) install: `choco install ghostscript -y`
-
-Chocolatey is a package manager, used to automate software install, like apt-get for Windows. [Install Chocolatey](https://chocolatey.org/install).
-
-#### Post-install instructions:
-
-It seems like chocolatey does not successfully [auto-shim](https://github.com/chocolatey/choco/wiki/FeaturesShim) the ghostscript executables after install. Which means you will have to shim the executables yourself to successfully call them from the batch file.
-
-*(Note: [shimgen.exe](https://chocolatey.org/docs/FeaturesShim) is a free tool included with Chocolatey)*
-
-Run from command prompt or PowerShell:
-
-*Assuming a 64-bit OS:* `shimgen --output=gswin64c --path="$env:ProgramFiles\gs\gs9.23\bin\gswin64c.exe" --debug`
-
-> [**v1.1.1** or greater][4] of **Sanitize-PDF.bat** will automatically install & shim Ghostscript if you have [chocolatey](https://chocolatey.org/install) installed.
-
-## How-to-Use:
-
-With *Ghostscript* installed, and gswin64c.exe either *shimmed* or added to the *PATH variable* as described above, Sanitize-PDF.bat is ready to use.
-
-Either drag-and-drop a pdf file onto **Sanitize-PDF.bat** or, edit the `_INPUT_PDF` variable in the :Parameters section at the very top of the script and run it. That's it!
-
-Once finished, the Sanitize-PDF.bat will have generated 3 new PDF documents in the same folder as the input PDF. These three new documents are the result of the different methods employed to sanitize or flatten the original, as described below.
-
-Sanitize-PDF.bat does not change or delete the original source document dropped on it.
-
-### How-to-modify:
-
-All input variables are set at the top of Sanitize-PDF.bat. You can change the names of the 3 final output PDFs, and the PostScript intermediary file, if you like.
-
-To change how images are downsized (only used in the 3rd method as described above), the `_DPI` variable can be changed to whatever you like. I have several lines setting this var to different values, so you only have to comment out `::` the last lines you don't wish to use; it doesn't matter if you comment out lines above the `_DPI` values you wish to use. By default this script has:
-
-```CMD
-SET "_DPI=63"
-SET "_DPI=120"
-SET "_DPI=150"
-SET "_DPI=200"
-::SET "_DPI=300"
-```
-
-So DPI will be set to 200 by default. If you wish to use 300, simply uncomment that line. To use 150 DPI instead, simply comment out the 200 line.
-
-## Thanks to:
+# Thanks to:
 
 - Go to [Secruity.SE][1] and upvote that question for having such an awesome, accurate, functional answer in it. I basically copied and pasted their work verbatim.
 - [PDFSAM Basic][2] is a free PDF Split-And-Merge tool, functionality normally only found in paid-for software. I use it all the time and never paid them a dime, so the best I can do for now is promote them for being awesome. Use it, share them on social media, and don't forget you can install [via Chocolatey](https://chocolatey.org/packages/pdfsam): `choco install pdfsam -y`
 - [Chocolatey](https://chocolatey.org) is an awesome tool for automating installing, uninstalling, updating, and managing software versions. You can install packages from their public repository, from a local source, or set up your own repository for internal use. They offer Pro and Business [editions](https://chocolatey.org/pricing) with virus scanning features and more, but the main functionality is always free.
 - And of course, the star of the show: [Ghostscript](https://ghostscript.com/)! Promote them on social media, help contribute if you know how, or help them bug test. A shout-out to all the folks who helped with this project for being awesome.
 
-## How to Contribute:
+# How to Contribute:
 
 1. Please send me any [bug reports][3] and [feature requests][3] through GitHub, just use the [Issue tracker][3] with the **bug**, **enhancement**, or **question** [labels](https://github.com/Kerbalnut/Sanitize-PDF/labels). No promises on delivery dates though!
 2. To contribute directly, [fork this repository](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-forks) on GitHub, then [clone your fork](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github) to your local machine. I recommend installing both [GitHub Desktop](https://desktop.github.com/) and [TortoiseGit](https://tortoisegit.org/) to help you interact with git repos, or [VS Code](https://code.visualstudio.com/) for an all-in-one solution with it being an IDE (code editor), split-screen markdown editor, and git-integrated. (Or all three, which can all be installed via [chocolatey](https://chocolatey.org/install): `choco install github-desktop tortoisegit vscode -y`) In your forked repo, you can create/publish/merge branches, pull updates from this parent repo, and when ready to share your changes, submit a [pull request from your fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
@@ -218,7 +202,7 @@ So DPI will be set to 200 by default. If you wish to use 300, simply uncomment t
 
 There are essentially 3 parts to this script even though it's not formatted to look that way, but referring to it this way will make it easier to talk about. The first part captures variables (and deletes waste) for use in the rest of the script. The second part is where ghostscript is invoked (gswin64c.exe) to execute several methods of removing "active content" as found in the [Security SE question][1]. The third and last part compares file sizes as a quick and simple method to show if the PDFs successfully lost any information from the conversion process (which is exactly what we want, we're trying to remove "active content" which we didn't intend to include, yet may be present in our PDFs anyway).
 
-## Disclaimer:
+# Disclaimer:
 
 This script is not intended to remove all/any malware from any PDF or any other document, and makes no such promises, and offers no warranty. Use at your own risk. 
 
