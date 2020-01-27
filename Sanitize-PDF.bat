@@ -262,24 +262,21 @@ IF /I NOT "%_GSWIN64C_INSTALLED%"=="YES" (
 				"%ChocolateyInstall%\tools\shimgen.exe" --output="gswin64c" --path="%_GSWIN64C_EXE%"
 			) ELSE (
 				REM ECHO DEBUGGING: We have Admin, but Chocolatey shimgen.exe not found.
-				REM ECHO DEBUGGING: Adding gswin64c to PATH . . .
-				REM SETX PATH "%PATH%;%_FOLDER%"
+				REM ECHO DEBUGGING: Adding gswin64c to PATH with SETX . . .
+				SETX PATH "%PATH%;%_FOLDER%"
+			)
+			IF /I "%_CHOCO_INSTALLED%"=="YES" (
+				ECHO Refreshing environment variables...
+				PAUSE
+				refreshenv & REM Bug: Automatically crashes after running 'refreshenv' command
+				ECHO Refresh complete^!
+				REM ECHO DEBUGGING: Continue on with rest of script from here...
+				PAUSE & REM Bug: Script will make it exactly this far, then crash.
+				REM GOTO GSWIN64C_SKIP
 			)
 		) ELSE (
-			REM ECHO DEBUGGING: Do not have Admin.
-			REM ECHO DEBUGGING: Adding gswin64c to PATH . . .
-			REM SETX PATH "%PATH%;%_FOLDER%"
-		)
-		IF /I "%_CHOCO_INSTALLED%"=="YES" (
-			ECHO Refreshing environment variables...
-			PAUSE
-			REM refreshenv & REM Bug: Automatically crashes after running 'refreshenv' command
-			ECHO Refresh complete^!
-			REM ECHO DEBUGGING: Continue on with rest of script from here...
-			REM PAUSE & REM Bug: Script will make it exactly this far, then crash.
-			REM GOTO GSWIN64C_SKIP
-		) ELSE (
-			REM ECHO Please restart the script to update environment variables.
+			REM ECHO DEBUGGING: Do not have Admin. Cannot add gswin64c.exe to PATH
+			REM ECHO DEBUGGING: Tip: Run the script As Administrator to update environment variables.
 			REM ECHO:
 			REM PAUSE
 			REM GOTO END
@@ -310,24 +307,21 @@ IF /I NOT "%_GSWIN64C_INSTALLED%"=="YES" (
 				"%ChocolateyInstall%\tools\shimgen.exe" --output="gswin64c" --path="%_GSWIN64C_EXE%"
 			) ELSE (
 				REM ECHO DEBUGGING: We have Admin, but Chocolatey shimgen.exe not found.
-				REM ECHO DEBUGGING: Adding gswin64c to PATH . . .
-				REM SETX PATH "%PATH%;%_FOLDER%"
+				REM ECHO DEBUGGING: Adding gswin64c to PATH with SETX . . .
+				SETX PATH "%PATH%;%_FOLDER%"
+			)
+			IF /I "%_CHOCO_INSTALLED%"=="YES" (
+				ECHO Refreshing environment variables...
+				PAUSE
+				refreshenv & REM Bug: Automatically crashes after running 'refreshenv' command
+				ECHO Refresh complete^!
+				REM ECHO DEBUGGING: Continue on with rest of script from here...
+				PAUSE & REM Bug: Script will make it exactly this far, then crash.
+				REM GOTO GSWIN64C_SKIP
 			)
 		) ELSE (
-			REM ECHO DEBUGGING: Do not have Admin.
-			REM ECHO DEBUGGING: Adding gswin64c to PATH . . .
-			REM SETX PATH "%PATH%;%_FOLDER%"
-		)
-		IF /I "%_CHOCO_INSTALLED%"=="YES" (
-			ECHO Refreshing environment variables...
-			PAUSE
-			REM refreshenv & REM Bug: Automatically crashes after running 'refreshenv' command
-			ECHO Refresh complete^!
-			REM ECHO DEBUGGING: Continue on with rest of script from here...
-			REM PAUSE & REM Bug: Script will make it exactly this far, then crash.
-			REM GOTO GSWIN64C_SKIP
-		) ELSE (
-			REM ECHO Please restart the script to update environment variables.
+			REM ECHO DEBUGGING: Do not have Admin. Cannot add gswin64c.exe to PATH
+			REM ECHO DEBUGGING: Tip: Run the script As Administrator to update environment variables.
 			REM ECHO:
 			REM PAUSE
 			REM GOTO END
