@@ -62,11 +62,11 @@ After the script has ended, if you "Press ANY key..." it will delete the placeho
 
 ## Helper functions
 
-If you frequently update the source PDF and want to rename the output to the same file name repeatedly, the script **AutoRenamePDF.bat** will do that automatically. Rename the script to the file name you want. For example, **"My New PDF Name.bat"**:
+**AutoRenamePDF.bat** will automatically rename any file, to whatever the script name is. For example, if you renamed the script to **"My New PDF Name.bat"**, then dropped a PDF file onto it:
 
 ![Example video of AutoRenamePDF.bat in use.][Auto Rename PDF demonstration]
 
-will convert any .pdf file dropped on it to **"My New PDF Name.pdf"**
+it will make a copy of that file, named **"My New PDF Name.pdf"**
 
 ## Choosing a method
 
@@ -129,7 +129,7 @@ Choose one of the following 4 install methods (rated by ease-of-use):
 - [#1. To automatically install everything](#1-to-automatically-install-everything)
 	- [How to choose which installer method:](#how-to-choose-which-installer-method)
 - [#2. If you already have Chocolatey installed](#2-if-you-already-have-chocolatey-installed)
-		- [Post-install instructions:](#post-install-instructions)
+			- [Post-install instructions:](#post-install-instructions)
 - [#3. To manually install GhostScript yourself (required dependency)](#3-to-manually-install-ghostscript-yourself-required-dependency)
 - [#4. If you already have GhostScript installed](#4-if-you-already-have-ghostscript-installed)
 	- [Handling download errors](#handling-download-errors)
