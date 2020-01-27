@@ -14,6 +14,29 @@ How do I remove active content from a pdf file](https://forums.adobe.com/thread/
 
 Another (free) option is Ghostscript, "an interpreter for the PostScript language and for PDF". [PostScript](https://www.adobe.com/products/postscript.html) [2](https://en.wikipedia.org/wiki/PostScript) is old enough that it does not support embedded Flash or JavaScript exploits that may be present in modern PDFs. This question from **security.stackexchange.com** lays out the method employed here: [**Effectiveness of flattening a PDF to remove malware**][1].
 
+# Index:
+
+- [Sanitize-PDF.bat](#sanitize-pdfbat)
+- [Index:](#index)
+- [What it is](#what-it-is)
+- [How to Use](#how-to-use)
+	- [Helper functions](#helper-functions)
+	- [Choosing a method](#choosing-a-method)
+	- [How to modify/customize the script:](#how-to-modifycustomize-the-script)
+- [How to Install](#how-to-install)
+	- [#1. To automatically install everything](#1-to-automatically-install-everything)
+		- [How to choose which installer method:](#how-to-choose-which-installer-method)
+	- [#2. If you already have Chocolatey installed](#2-if-you-already-have-chocolatey-installed)
+			- [Post-install instructions:](#post-install-instructions)
+	- [#3. To manually install GhostScript yourself (required dependency)](#3-to-manually-install-ghostscript-yourself-required-dependency)
+	- [#4. If you already have GhostScript installed](#4-if-you-already-have-ghostscript-installed)
+		- [Handling download errors](#handling-download-errors)
+- [Thanks to:](#thanks-to)
+- [How to Contribute:](#how-to-contribute)
+	- [More info about GhostScript options:](#more-info-about-ghostscript-options)
+		- [Notes if contributing Pull Requests:](#notes-if-contributing-pull-requests)
+- [Disclaimer:](#disclaimer)
+
 # What it is
 
 **Sanitize-PDF.bat** is a Batch file (Windows only) which runs as a wrapper for [GhostScript](https://www.ghostscript.com/), a command-line PDF/PostScript "printer" (converter). The original purpose of this script was fixing recently coverted-to-PDF Resume/CV documents, quickly, by **dragging-and-dropping** a PDF file onto a .bat script. Then GhostScript is called with various command-line options applied, currently using 3 different methods to "clean" the PDFs of Active Content.
