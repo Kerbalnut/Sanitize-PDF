@@ -20,7 +20,7 @@ Another (free) option is Ghostscript, "an interpreter for the PostScript languag
 
 # How to Use
 
-Once installed, you simply drag-and-drop a PDF onto **Sanitize-PDF.bat** and it will call [GhostScript](https://www.ghostscript.com/) with 3 different sets of command line options, which will produce 3 different files.
+Once installed, you simply drag-and-drop a PDF onto **Sanitize-PDF.bat** and it will call [GhostScript](https://www.ghostscript.com/) with 3 different sets of command line options, which will produce 3 different files. Sanitize-PDF.bat does not modify or delete the original source document dropped on it.
 
 ![Example video of Sanitize-PDF.bat in use.][Sanitize PDF demonstration]
 
@@ -68,19 +68,15 @@ Still afraid of no ghost? You didn't read the script - TheRegister.co.uk](https:
 
 ---
 
-## How-to-Use:
+## How to modify/customize the script:
 
-With *Ghostscript* installed, and gswin64c.exe either *shimmed* or added to the *PATH variable* as described above, Sanitize-PDF.bat is ready to use.
+Either drag-and-drop a pdf file onto **Sanitize-PDF.bat**, or edit the `_INPUT_PDF` variable in the `:Parameters` section at the very top of the script, then run it.
 
-Either drag-and-drop a pdf file onto **Sanitize-PDF.bat** or, edit the `_INPUT_PDF` variable in the :Parameters section at the very top of the script and run it. That's it!
+To edit Sanitize-PDF.bat, right-click the file and select **Edit**. [Notepad++](https://chocolatey.org/packages/notepadplusplus) is a fantastic recommended editor for **.bat** files and many others, better than `notepad.exe`.
 
-Once finished, the Sanitize-PDF.bat will have generated 3 new PDF documents in the same folder as the input PDF. These three new documents are the result of the different methods employed to sanitize or flatten the original, as described below.
+All input variables are set at the top of Sanitize-PDF.bat in the `:Parameters` block. You can even change the names of the 3 final output PDFs, and the PostScript intermediary file, if you like. The following screenshot was taken in the [Visual Studio Code](https://chocolatey.org/packages/vscode) editor.
 
-Sanitize-PDF.bat does not change or delete the original source document dropped on it.
-
-### How-to-modify:
-
-All input variables are set at the top of Sanitize-PDF.bat. You can change the names of the 3 final output PDFs, and the PostScript intermediary file, if you like.
+![Example image of Parameters block in Sanitize PDF][Sanitize PDF Parameters block image]
 
 To change how images are downsized (only used in the 3rd method as described above), the `_DPI` variable can be changed to whatever you like. I have several lines setting this var to different values, so you only have to comment out `::` the last lines you don't wish to use; it doesn't matter if you comment out lines above the `_DPI` values you wish to use. By default this script has:
 
@@ -88,11 +84,13 @@ To change how images are downsized (only used in the 3rd method as described abo
 SET "_DPI=63"
 SET "_DPI=120"
 SET "_DPI=150"
+SET "_DPI=170"
 SET "_DPI=200"
+::SET "_DPI=250"
 ::SET "_DPI=300"
 ```
 
-So DPI will be set to 200 by default. If you wish to use 300, simply uncomment that line. To use 150 DPI instead, simply comment out the 200 line.
+So, DPI will be set to 200 by default. If you wish to use 250, simply uncomment that line. To use 150 DPI instead, simply comment out all the `SET "_DPI="` lines after it.
 
 ---
 
@@ -127,11 +125,11 @@ How to choose between `Install-Chocolatey.bat` and `BoxstarterInstall-Ghostscrip
 - Use `BoxstarterInstall-Ghostscript.bat` for a 1-shot, all-in-one install method with no unnecessary extras.
 - Use `Install-Chocolatey.bat` if you wish to experiment with  [Chocolatey](https://chocolatey.org/packages) to manage other Windows software installs and automatic updates e.g. `\> choco upgrade Ghostscript`
 
-**Chocolatey** is a package manager used to automate software installs, like apt-get for Windows. It is essentially a wrapper for the [NuGet package system](https://www.nuget.org/), which *packages* software by storing additional metadata about how to use it in a standardized format. You can install Chocolatey by following the [official instructions on Chocolatey.org](https://chocolatey.org/install), or by running [`Install-Chocolatey.bat`](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/install/Install-Chocolatey.bat), which is essentially a wrapper for the PowerShell 1-liner from the official documentation (and also automatically requests Administrator permissions when you **double-click** it).
-
-Once Chocolately is installed, **Sanitize-PDF.bat** will detect if GhostScript has not been installed yet, and automatically call Chocolately to handle the install (with `choco install ghostscript -y`) when starting up. Double-click **Sanitize-PDF.bat** and the dependency checks and chocolatey automatic install will run, until the *"no input PDF found"* error is reached.
-
-[**Boxstarter**](https://boxstarter.org/) is essentially a wrapper for Chocolatey. It allows packages from the [Chocolatey public repository](https://chocolatey.org/packages) to be installed without requiring the user to install Chocolatey first. It also has a few other features, such as additional functions useful for setting up a computer after a fresh Windows install like changing certain Windows OS options & prefences; or such as the ability to **call a runtime executable through IE (using native Windows tools) to run a Boxstarter script** without having Boxstarter installed yet, either. This is the feature the script [`BoxstarterInstall-Ghostscript.bat`](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/install/BoxstarterInstall-Ghostscript.bat) employs, which is essentially a wrapper for IE & Boxstarter. It builds the URL for the Boxstarter runtime executable script to install the GhostScript package (from Chocolatey), then finds IE, and calls it with that URL.
+> **Chocolatey** is a package manager used to automate software installs, like apt-get for Windows. It is essentially a wrapper for the [NuGet package system](https://www.nuget.org/), which *packages* software by storing additional metadata about how to use it in a standardized format. You can install Chocolatey by following the [official instructions on Chocolatey.org](https://chocolatey.org/install), or by running [`Install-Chocolatey.bat`](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/install/Install-Chocolatey.bat), which is essentially a wrapper for the PowerShell 1-liner from the official documentation (and also automatically requests Administrator permissions when you **double-click** it).
+> 
+> Once Chocolately is installed, **Sanitize-PDF.bat** will detect if GhostScript has not been installed yet, and automatically call Chocolately to handle the install (with `choco install ghostscript -y`) when starting up. Double-click **Sanitize-PDF.bat** and the dependency checks and chocolatey automatic install will run, until the *"no input PDF found"* error is reached.
+> 
+> [**Boxstarter**](https://boxstarter.org/) is essentially a wrapper for Chocolatey. It allows packages from the [Chocolatey public repository](https://chocolatey.org/packages) to be installed without requiring the user to install Chocolatey first. It also has a few other features, such as additional functions useful for setting up a computer after a fresh Windows install like changing certain Windows OS options & prefences; or such as the ability to **call a runtime executable through IE (using native Windows tools) to run a Boxstarter script** without having Boxstarter installed yet, either. This is the feature the script [`BoxstarterInstall-Ghostscript.bat`](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/install/BoxstarterInstall-Ghostscript.bat) employs, which is essentially a wrapper for IE & Boxstarter. It builds the URL for the Boxstarter runtime executable script to install the GhostScript package (from Chocolatey), then finds IE, and calls it with that URL.
 
 ## #2. If you already have Chocolatey installed
 
@@ -150,6 +148,8 @@ A reboot may be necessary.
 ~~Run from command prompt or PowerShell:~~
 
 *Assuming a 64-bit OS:* `shimgen --output=gswin64c --path="$env:ProgramFiles\gs\gs9.23\bin\gswin64c.exe" --debug`
+
+~~With *Ghostscript* installed, and gswin64c.exe either *shimmed* or added to the *PATH variable* as described above, Sanitize-PDF.bat is ready to use.~~
 
 > [**v1.1.1** or greater][4] of **Sanitize-PDF.bat** will automatically install & shim Ghostscript (`gswin64c.exe`) if you have [chocolatey](https://chocolatey.org/install) installed.
 
@@ -192,7 +192,7 @@ If you still get firewall/anti-virus/anti-malware/proxy services blocking even y
 1. Please send me any [bug reports][3] and [feature requests][3] through GitHub, just use the [Issue tracker][3] with the **bug**, **enhancement**, or **question** [labels](https://github.com/Kerbalnut/Sanitize-PDF/labels). No promises on delivery dates though!
 2. To contribute directly, [fork this repository](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-forks) on GitHub, then [clone your fork](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository-from-github) to your local machine. I recommend installing both [GitHub Desktop](https://desktop.github.com/) and [TortoiseGit](https://tortoisegit.org/) to help you interact with git repos, or [VS Code](https://code.visualstudio.com/) for an all-in-one solution with it being an IDE (code editor), split-screen markdown editor, and git-integrated. (Or all three, which can all be installed via [chocolatey](https://chocolatey.org/install): `choco install github-desktop tortoisegit vscode -y`) In your forked repo, you can create/publish/merge branches, pull updates from this parent repo, and when ready to share your changes, submit a [pull request from your fork](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork).
 
-### More info about GhostScript options:
+## More info about GhostScript options:
 
 - [More info on Ghostscript devices](https://ghostscript.com/doc/current/Devices.htm)
 - [More info on PDF switches](https://www.ghostscript.com/doc/9.23/Use.htm#PDF)
@@ -225,6 +225,7 @@ GhostScript is [distributed](https://www.ghostscript.com/download/gsdnld.html) w
 
 [Auto Rename PDF demonstration]: /documentation/media/AutoRenameExample.gif "Rename this script to whatever you want, and it will create a renamed copy of whatever file you drag and drop onto it."
 
+[Sanitize PDF Parameters block image]: /documentation/media/SanitizePDF_ParametersBlock_VSCode.PNG "The :Parameters block can be found directly at the top of the Sanitize-PDF.bat script. This is where all variables affecting the script's execution can be modified."
 
 
 
