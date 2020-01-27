@@ -22,6 +22,7 @@ REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 SET "_INPUT_PDF="
 SET "_INPUT_PDF=%USERPROFILE%\Documents\example document.pdf"
+SET "_INPUT_PDF=%USERPROFILE%\Desktop\Active Content.pdf"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -149,6 +150,7 @@ SET "_AFTER_ADMIN_ELEVATION=%Temp%\temp-gswin64c-function.txt"
 :: 6. Cast errors if our External Function is still not found.
 ::-------------------------------------------------------------------------------
 SET "_GSWIN64C_INSTALLED=NO"
+SET "_GSWIN64C_EXE="
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 :: 1. Check if we have Administrator privileges
 REM Bugfix: Check if we have admin rights right now (even tho we may not need them), so that later functions can check the result without requiring EnableDelayedExpansion to be enabled.
@@ -259,26 +261,25 @@ IF /I NOT "%_GSWIN64C_INSTALLED%"=="YES" (
 				REM "%ChocolateyInstall%\tools\shimgen.exe" --output="gswin64c" --path="C:\Program Files\gs\gs9.27\bin\gswin64c.exe"
 				"%ChocolateyInstall%\tools\shimgen.exe" --output="gswin64c" --path="%_GSWIN64C_EXE%"
 			) ELSE (
-				REM ECHO DEBUGGING: Adding gswin64c to PATH . . .
+				REM ECHO DEBUGGING: We have Admin, but Chocolatey shimgen.exe not found.
+				REM ECHO DEBUGGING: Adding gswin64c to PATH with SETX . . .
 				SETX PATH "%PATH%;%_FOLDER%"
 			)
+			IF /I "%_CHOCO_INSTALLED%"=="YES" (
+				ECHO Refreshing environment variables...
+				PAUSE
+				refreshenv & REM Bug: Automatically crashes after running 'refreshenv' command
+				ECHO Refresh complete^!
+				REM ECHO DEBUGGING: Continue on with rest of script from here...
+				PAUSE & REM Bug: Script will make it exactly this far, then crash.
+				REM GOTO GSWIN64C_SKIP
+			)
 		) ELSE (
-			REM ECHO DEBUGGING: Adding gswin64c to PATH . . .
-			SETX PATH "%PATH%;%_FOLDER%"
-		)
-		IF /I "%_CHOCO_INSTALLED%"=="YES" (
-			ECHO Refreshing environment variables...
-			PAUSE
-			refreshenv
-			ECHO Refresh complete^^!
-			REM ECHO DEBUGGING: Continue on with rest of script from here...
-			PAUSE
-			REM GOTO GSWIN64C_SKIP
-		) ELSE (
-			ECHO Please restart the script to update environment variables.
-			ECHO:
-			PAUSE
-			GOTO END
+			REM ECHO DEBUGGING: Do not have Admin. Cannot add gswin64c.exe to PATH
+			REM ECHO DEBUGGING: Tip: Run the script As Administrator to update environment variables.
+			REM ECHO:
+			REM PAUSE
+			REM GOTO END
 		)
 	)
 )
@@ -305,26 +306,25 @@ IF /I NOT "%_GSWIN64C_INSTALLED%"=="YES" (
 				REM "%ChocolateyInstall%\tools\shimgen.exe" --output="gswin64c" --path="C:\Program Files\gs\gs9.27\bin\gswin64c.exe"
 				"%ChocolateyInstall%\tools\shimgen.exe" --output="gswin64c" --path="%_GSWIN64C_EXE%"
 			) ELSE (
-				REM ECHO DEBUGGING: Adding gswin64c to PATH . . .
+				REM ECHO DEBUGGING: We have Admin, but Chocolatey shimgen.exe not found.
+				REM ECHO DEBUGGING: Adding gswin64c to PATH with SETX . . .
 				SETX PATH "%PATH%;%_FOLDER%"
 			)
+			IF /I "%_CHOCO_INSTALLED%"=="YES" (
+				ECHO Refreshing environment variables...
+				PAUSE
+				refreshenv & REM Bug: Automatically crashes after running 'refreshenv' command
+				ECHO Refresh complete^!
+				REM ECHO DEBUGGING: Continue on with rest of script from here...
+				PAUSE & REM Bug: Script will make it exactly this far, then crash.
+				REM GOTO GSWIN64C_SKIP
+			)
 		) ELSE (
-			REM ECHO DEBUGGING: Adding gswin64c to PATH . . .
-			SETX PATH "%PATH%;%_FOLDER%"
-		)
-		IF /I "%_CHOCO_INSTALLED%"=="YES" (
-			ECHO Refreshing environment variables...
-			PAUSE
-			refreshenv
-			ECHO Refresh complete^^!
-			REM ECHO DEBUGGING: Continue on with rest of script from here...
-			PAUSE
-			REM GOTO GSWIN64C_SKIP
-		) ELSE (
-			ECHO Please restart the script to update environment variables.
-			ECHO:
-			PAUSE
-			GOTO END
+			REM ECHO DEBUGGING: Do not have Admin. Cannot add gswin64c.exe to PATH
+			REM ECHO DEBUGGING: Tip: Run the script As Administrator to update environment variables.
+			REM ECHO:
+			REM PAUSE
+			REM GOTO END
 		)
 	)
 )
@@ -405,6 +405,8 @@ IF /I "%_GSWIN64C_INSTALLED%"=="NO" (
 )
 ::- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 REM ECHO DEBUGGING: End of gswin64c.exe External Function.
+REM ECHO DEBUGGING: %%_GSWIN64C_INSTALLED%% = %_GSWIN64C_INSTALLED%
+REM ECHO DEBUGGING: %%_GSWIN64C_EXE%% = %_GSWIN64C_EXE%
 :GSWIN64C_SKIP
 :-------------------------------------------------------------------------------
 
@@ -460,7 +462,7 @@ IF "%_INPUT_PDF%"=="" (
 
 IF NOT EXIST "%_INPUT_PDF%" (
 	ECHO:
-	ECHO "%_INPUT_PDF%" does not exist.
+	ECHO Input file "%_INPUT_PDF%" does not exist.
 	ECHO:
 	ECHO  To use %~nx0, either: 
 	ECHO     - Drag-and-Drop a PDF file to flatten onto %~nx0
@@ -569,7 +571,8 @@ REM ECHO DEBUGGING: gswin64c -sOutputFile="%_OUTPUT_PDF%" "%_INPUT_PDF%"
 
 ::gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=flattened.pdf %~nx1
 
-gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="%_OUTPUT_PDF%" "%_INPUT_PDF%"
+::gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="%_OUTPUT_PDF%" "%_INPUT_PDF%"
+"%_GSWIN64C_EXE%" -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="%_OUTPUT_PDF%" "%_INPUT_PDF%"
 
 :SanitizeMethod2
 IF /I NOT "%_METHOD_2%"=="ON" GOTO SanitizeMethod3
@@ -587,7 +590,9 @@ REM ECHO DEBUGGING: gswin64c -sOutputFile="%_PLACEHOLDER_PS%" "%_INPUT_PDF%"
 ::https://ghostscript.com/doc/current/Devices.htm
 ::gswin64c -dNOPAUSE -dBATCH -sDEVICE=ps2write -sOutputFile=flattened.ps %_INPUT_PDF%
 ::gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=%_PLACEHOLDER_PS% %_INPUT_PDF%
-gswin64c -dNOPAUSE -dBATCH -sDEVICE=ps2write -sOutputFile="%_PLACEHOLDER_PS%" "%_INPUT_PDF%"
+
+::gswin64c -dNOPAUSE -dBATCH -sDEVICE=ps2write -sOutputFile="%_PLACEHOLDER_PS%" "%_INPUT_PDF%"
+"%_GSWIN64C_EXE%" -dNOPAUSE -dBATCH -sDEVICE=ps2write -sOutputFile="%_PLACEHOLDER_PS%" "%_INPUT_PDF%"
 
 ECHO:
 
@@ -596,7 +601,8 @@ REM ECHO DEBUGGING: gswin64c -sOutputFile="%%_OUTPUT_PDF_PS%%" "%%_PLACEHOLDER_P
 REM ECHO DEBUGGING: gswin64c -sOutputFile="%_OUTPUT_PDF_PS%" "%_PLACEHOLDER_PS%"
 
 ::https://www.ghostscript.com/doc/9.23/Use.htm#PDF
-gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="%_OUTPUT_PDF_PS%" "%_PLACEHOLDER_PS%"
+::gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="%_OUTPUT_PDF_PS%" "%_PLACEHOLDER_PS%"
+"%_GSWIN64C_EXE%" -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile="%_OUTPUT_PDF_PS%" "%_PLACEHOLDER_PS%"
 
 :SanitizeMethod3
 ECHO:
@@ -615,7 +621,8 @@ REM ECHO DEBUGGING: gswin64c -sOutputFile="%_OUTPUT_PDF_IMAGES%" "%_INPUT_PDF%"
 ::-dDownsampleColorImages -dColorImageDownsampleType=/Bicubic -dColorImageResolution=%_DPI% -dDownsampleGrayImages -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=%_DPI% -dDownsampleMonoImages -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=%_DPI%
 
 ::https://www.ghostscript.com/doc/9.23/VectorDevices.htm#PDFWRITE
-gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dDownsampleColorImages -dColorImageDownsampleType=/Bicubic -dColorImageResolution=%_DPI% -dDownsampleGrayImages -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=%_DPI% -dDownsampleMonoImages -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=%_DPI% -sOutputFile="%_OUTPUT_PDF_IMAGES%" "%_INPUT_PDF%"
+::gswin64c -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dDownsampleColorImages -dColorImageDownsampleType=/Bicubic -dColorImageResolution=%_DPI% -dDownsampleGrayImages -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=%_DPI% -dDownsampleMonoImages -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=%_DPI% -sOutputFile="%_OUTPUT_PDF_IMAGES%" "%_INPUT_PDF%"
+"%_GSWIN64C_EXE%" -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dDownsampleColorImages -dColorImageDownsampleType=/Bicubic -dColorImageResolution=%_DPI% -dDownsampleGrayImages -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=%_DPI% -dDownsampleMonoImages -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=%_DPI% -sOutputFile="%_OUTPUT_PDF_IMAGES%" "%_INPUT_PDF%"
 
 :: Test for failure condition.
 ::SET "_OUTPUT_PDF=%_INPUT_PDF%"
