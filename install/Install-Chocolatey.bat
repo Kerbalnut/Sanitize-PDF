@@ -4,6 +4,10 @@
 
 :: RUNAS /noprofile /user:[DOMAIN]\[USERNAME] "CMD.EXE /C ".\Get-Chocolatey.bat""
 
+:: Source:
+::https://github.com/Kerbalnut/Batch-Tools-SysAdmin
+::https://github.com/Kerbalnut/Batch-Tools-SysAdmin/blob/master/Tools/Install-Chocolatey.bat
+
 :RunAsAdministrator
 :: BatchGotAdmin International-Fix Code
 :: https://sites.google.com/site/eneerge/home/BatchGotAdmin

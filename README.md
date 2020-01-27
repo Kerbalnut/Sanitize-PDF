@@ -122,8 +122,10 @@ Afterwards, **Sanitize-PDF.bat** is ready to run.
 
 How to choose between `Install-Chocolatey.bat` and `BoxstarterInstall-Ghostscript.bat`? Both rely on [**Chocolatey**](https://chocolatey.org) to automatically install [GhostScript](https://www.ghostscript.com).
 
-- Use `BoxstarterInstall-Ghostscript.bat` for a 1-shot, all-in-one install method with no unnecessary extras.
-- Use `Install-Chocolatey.bat` if you wish to experiment with  [Chocolatey](https://chocolatey.org/packages) to manage other Windows software installs and automatic updates e.g. `\> choco upgrade Ghostscript`
+- Use [`BoxstarterInstall-Ghostscript.bat`](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/install/BoxstarterInstall-Ghostscript.bat) for a 1-shot, all-in-one install method with no unnecessary extras. - ([Source](https://github.com/Kerbalnut/Batch-Tools-SysAdmin/blob/master/BoxstarterInstall-template.bat))
+- Use [`Install-Chocolatey.bat`](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/install/Install-Chocolatey.bat) if you wish to experiment with  [Chocolatey](https://chocolatey.org/packages) to manage other Windows software installs and automatic updates e.g. `\> choco upgrade Ghostscript` - ([Source](https://github.com/Kerbalnut/Batch-Tools-SysAdmin/blob/master/Tools/Install-Chocolatey.bat))
+
+*The original source for both of these scripts is a* [*separate GitHub repo.*](https://github.com/Kerbalnut/Batch-Tools-SysAdmin)
 
 > **Chocolatey** is a package manager used to automate software installs, like apt-get for Windows. It is essentially a wrapper for the [NuGet package system](https://www.nuget.org/), which *packages* software by storing additional metadata about how to use it in a standardized format. You can install Chocolatey by following the [official instructions on Chocolatey.org](https://chocolatey.org/install), or by running [`Install-Chocolatey.bat`](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/install/Install-Chocolatey.bat), which is essentially a wrapper for the PowerShell 1-liner from the official documentation (and also automatically requests Administrator permissions when you **double-click** it).
 > 

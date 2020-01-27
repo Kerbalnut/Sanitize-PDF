@@ -2,6 +2,10 @@
 ::SETLOCAL
 SETLOCAL EnableDelayedExpansion
 
+:: Source:
+::https://github.com/Kerbalnut/Batch-Tools-SysAdmin
+::https://github.com/Kerbalnut/Batch-Tools-SysAdmin/blob/master/BoxstarterInstall-template.bat
+
 ::Index: 
 :: 1. :RunAsAdministrator
 :: 2. :Header
