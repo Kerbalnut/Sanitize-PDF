@@ -27,7 +27,6 @@ Another (free) option is Ghostscript, "an interpreter for the PostScript languag
 	- [#1. To automatically install everything](#1-to-automatically-install-everything)
 		- [How to choose which installer method:](#how-to-choose-which-installer-method)
 	- [#2. If you already have Chocolatey installed](#2-if-you-already-have-chocolatey-installed)
-			- [Post-install instructions:](#post-install-instructions)
 	- [#3. To manually install GhostScript yourself (required dependency)](#3-to-manually-install-ghostscript-yourself-required-dependency)
 	- [#4. If you already have GhostScript installed](#4-if-you-already-have-ghostscript-installed)
 		- [Handling download errors](#handling-download-errors)
@@ -129,7 +128,6 @@ Choose one of the following 4 install methods (rated by ease-of-use):
 - [#1. To automatically install everything](#1-to-automatically-install-everything)
 	- [How to choose which installer method:](#how-to-choose-which-installer-method)
 - [#2. If you already have Chocolatey installed](#2-if-you-already-have-chocolatey-installed)
-			- [Post-install instructions:](#post-install-instructions)
 - [#3. To manually install GhostScript yourself (required dependency)](#3-to-manually-install-ghostscript-yourself-required-dependency)
 - [#4. If you already have GhostScript installed](#4-if-you-already-have-ghostscript-installed)
 	- [Handling download errors](#handling-download-errors)
@@ -171,20 +169,6 @@ Install GhostScript:  (Run As Administrator)
 - [Chocolatey package](https://chocolatey.org/packages/Ghostscript) install: `\> choco install ghostscript -y` 
 
 A reboot may be necessary.
-
-#### Post-install instructions:
-
-~~It seems like chocolatey does not always successfully [auto-shim](https://github.com/chocolatey/choco/wiki/FeaturesShim) the ghostscript executables after install. Which means you will have to shim the executables yourself to successfully call them from the batch file.~~
-
-*(Note: [shimgen.exe](https://chocolatey.org/docs/FeaturesShim) is a free tool included with Chocolatey)*
-
-~~Run from command prompt or PowerShell:~~
-
-*Assuming a 64-bit OS:* `shimgen --output=gswin64c --path="$env:ProgramFiles\gs\gs9.23\bin\gswin64c.exe" --debug`
-
-~~With *Ghostscript* installed, and gswin64c.exe either *shimmed* or added to the *PATH variable* as described above, Sanitize-PDF.bat is ready to use.~~
-
-> [**v1.1.1** or greater][4] of **Sanitize-PDF.bat** will automatically install & shim Ghostscript (`gswin64c.exe`) if you have [chocolatey](https://chocolatey.org/install) installed.
 
 Then, follow the remaining instructions in **#4. If you already have GhostScript installed**
 
