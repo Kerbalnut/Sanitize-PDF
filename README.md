@@ -62,11 +62,11 @@ After the script has ended, if you "Press ANY key..." it will delete the placeho
 
 ## Helper functions
 
-**AutoRenamePDF.bat** will automatically rename any file, to whatever the script name is. For example, if you renamed the script to **"My New PDF Name.bat"**, then dropped a PDF file onto it:
+If you frequently update the source PDF and want to rename the output to the same file name repeatedly, the script **AutoRenamePDF.bat** will do that automatically. Rename the script to the file name you want. For example, **"My New PDF Name.bat"**:
 
 ![Example video of AutoRenamePDF.bat in use.][Auto Rename PDF demonstration]
 
-it will make a copy of that file, named **"My New PDF Name.pdf"**
+will convert any .pdf file dropped on it to **"My New PDF Name.pdf"**
 
 ## Choosing a method
 
@@ -86,7 +86,7 @@ For the first motivation however, where we care more about **removing malware** 
 
 > [**2019-01-24** World's favourite open-source PDF interpreter needs patching (again)
 Still afraid of no ghost? You didn't read the script - TheRegister.co.uk](https://www.theregister.co.uk/2019/01/24/pdf_ghostscript_vulnerability/)
-> **FYI:** This is not a 100% perfect method for removing malware. A vulnerability was found present in all GhostScript versions up to '**9.26**'. If you do not trust the source of the PDF, do not open it. This software is provided "as-is" with no warranty. See **Disclaimer** at the bottom of this README and the [LICENSE](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/LICENSE) for this repo.
+> **FYI:** This is not a 100% perfect method for removing malware. A vulnerability was found present in all GhostScript versions up to '**9.26**'. If you do not trust the source of the PDF, do not open it. This software is provided "as-is" with no warranty. See [Disclaimer](#disclaimer) at the bottom of this README and the [LICENSE](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/LICENSE) for this repo.
 > As of this writing, [GhostScript 9.50](https://www.ghostscript.com/Ghostscript_9.50.html) is available.
 
 ---
