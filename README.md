@@ -85,7 +85,9 @@ For the first motivation however, where we care more about **removing malware** 
 
 > [**2019-01-24** World's favourite open-source PDF interpreter needs patching (again)
 Still afraid of no ghost? You didn't read the script - TheRegister.co.uk](https://www.theregister.co.uk/2019/01/24/pdf_ghostscript_vulnerability/)
+>
 > **FYI:** This is not a 100% perfect method for removing malware. A vulnerability was found present in all GhostScript versions up to '**9.26**'. If you do not trust the source of the PDF, do not open it. This software is provided "as-is" with no warranty. See [Disclaimer](#disclaimer) at the bottom of this README and the [LICENSE](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/LICENSE) for this repo.
+>
 > As of this writing, [GhostScript 9.50](https://www.ghostscript.com/Ghostscript_9.50.html) is available.
 
 ---
@@ -138,12 +140,12 @@ Head over to the [**Releases**][4] page to find the most recent stable versions,
 
 Once finished downloading, un-zip the file, and in it you will find an [install](https://github.com/Kerbalnut/Sanitize-PDF/tree/master/install) folder with:
 
-- `BoxstarterInstall-Ghostscript.bat`
-- `Install-Chocolatey.bat`
+- [`BoxstarterInstall-Ghostscript.bat`](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/install/BoxstarterInstall-Ghostscript.bat)
+- [`Install-Chocolatey.bat`](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/install/Install-Chocolatey.bat)
 
 Both of these are automation scripts that will will enable Sanitize-PDF.bat dependency installation of GhostScript, required for the script to function. Pick either one (both will require Administrator permissions), and run one of them by **double-clicking** on it.
 
-A reboot may be necessary.
+*A reboot may be necessary.*
 
 Afterwards, **Sanitize-PDF.bat** is ready to run.
 
@@ -151,8 +153,8 @@ Afterwards, **Sanitize-PDF.bat** is ready to run.
 
 How to choose between `Install-Chocolatey.bat` and `BoxstarterInstall-Ghostscript.bat`? Both rely on [**Chocolatey**](https://chocolatey.org) to automatically install [GhostScript](https://www.ghostscript.com).
 
-- Use [`BoxstarterInstall-Ghostscript.bat`](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/install/BoxstarterInstall-Ghostscript.bat) for a 1-shot, all-in-one install method with no unnecessary extras. - ([Source](https://github.com/Kerbalnut/Batch-Tools-SysAdmin/blob/master/BoxstarterInstall-template.bat))
-- Use [`Install-Chocolatey.bat`](https://github.com/Kerbalnut/Sanitize-PDF/blob/master/install/Install-Chocolatey.bat) if you wish to experiment with  [Chocolatey](https://chocolatey.org/packages) to manage other Windows software installs and automatic updates e.g. `\> choco upgrade Ghostscript` - ([Source](https://github.com/Kerbalnut/Batch-Tools-SysAdmin/blob/master/Tools/Install-Chocolatey.bat))
+- Use `BoxstarterInstall-Ghostscript.bat` for a 1-shot, all-in-one install method, with no unnecessary extras. - ([Source](https://github.com/Kerbalnut/Batch-Tools-SysAdmin/blob/master/BoxstarterInstall-template.bat))
+- Use `Install-Chocolatey.bat` if you wish to experiment with  [Chocolatey](https://chocolatey.org/packages) to manage other Windows software installs and automatic updates e.g. `\> choco upgrade Ghostscript` - ([Source](https://github.com/Kerbalnut/Batch-Tools-SysAdmin/blob/master/Tools/Install-Chocolatey.bat))
 
 *The original source for both of these scripts is a* [*separate GitHub repo.*](https://github.com/Kerbalnut/Batch-Tools-SysAdmin)
 
@@ -168,7 +170,7 @@ Install GhostScript:  (Run As Administrator)
 
 - [Chocolatey package](https://chocolatey.org/packages/Ghostscript) install: `\> choco install ghostscript -y` 
 
-A reboot may be necessary.
+*A reboot may be necessary.*
 
 Then, follow the remaining instructions in **#4. If you already have GhostScript installed**
 
@@ -176,9 +178,9 @@ Then, follow the remaining instructions in **#4. If you already have GhostScript
 
 Head over to the [GhostScript installer page](https://www.ghostscript.com/download/gsdnld.html), download the appropriate version for your system, and run the installer.
 
-A reboot may be necessary.
-
 > [**v1.1.1** or greater][4] of **Sanitize-PDF.bat** will automatically add Ghostscript (`gswin64c.exe`) to your PATH environment variable, if it is found.
+
+*A reboot may be necessary.*
 
 Then, follow the remaining instructions in **#4. If you already have GhostScript installed**
 
