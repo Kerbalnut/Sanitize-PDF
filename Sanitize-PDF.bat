@@ -26,7 +26,7 @@ SET "_INPUT_PDF=%USERPROFILE%\Desktop\Active Content.pdf"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-:: Params2 = Choose with methods to turn on or off
+:: Params2 = Choose which methods to turn on or off
 
 :: Method 2 is NOT recommended for PDFs with lots of hi-res images
 :: Method 2 is better for removing unseen (executable) Active Content, since Method 2 converts to PostScript format which does not support such features.
