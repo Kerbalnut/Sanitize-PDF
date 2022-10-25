@@ -27,8 +27,6 @@ REM ----------------------------------------------------------------------------
 :: %~p1 Expand %1 to a Path only e.g. \utils\ this includes a trailing \ which will be interpreted as an escape character by some commands.
 SET "_HOME_PATH=%~dp0"
 
-SET "_SOURCE_FILE_PATH=
-
 SET "_FULL_PATH=%_HOME_PATH%%_RENAME_TO%"
 
 REM - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
